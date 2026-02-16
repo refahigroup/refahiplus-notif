@@ -1,0 +1,221 @@
+# This file is a template, and might need editing before it works on your project.
+# To contribute improvements to CI/CD templates, please follow the Development guide at:
+# https://docs.gitlab.com/ee/development/cicd/templates.html
+# This specific template is located at:
+# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Docker.gitlab-ci.yml
+
+# Build a Docker image with CI/CD and push to the GitLab registry.
+# Docker-in-Docker documentation: https://docs.gitlab.com/ee/ci/docker/using_docker_build.html
+#
+# This template uses one generic job with conditional builds
+# for the default branch and all other (MR) branches.
+cache:
+  key: '$CI_COMMIT_REF_NAME'
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://$runner2 
+  DOCKER_IMAGE: "$CI_PROJECT_PATH"
+stages:
+    - build_dev
+    - deploy_dev
+    - build_stg
+    - deploy_stg
+    - build_prd
+    - deploy_prd
+
+
+build_dev:
+  stage: build_dev
+  # Use the official docker image.
+  image: 172.17.71.165:8082/dev/base/docker:dind
+  tags: 
+    - BUILDER
+  services:
+    - 172.17.71.165:8082/dev/base/docker:dind
+  variables:
+    API_PREFIX: api
+    PANEL_PREFIX: panel
+    REALTIME_PREFIX: realtime
+    REALTIME_TEST_PREFIX: realtimetest
+    DOCKER_IMAGE_NAME_API: $REGISTRY_URL_DEV_IP/dev/$CI_PROJECT_NAME.$API_PREFIX.$CI_COMMIT_BRANCH
+    DOCKER_IMAGE_NAME_PANEL: $REGISTRY_URL_DEV_IP/dev/$CI_PROJECT_NAME.$PANEL_PREFIX.$CI_COMMIT_BRANCH
+    DOCKER_IMAGE_NAME_REALTIME: $REGISTRY_URL_DEV_IP/dev/$CI_PROJECT_NAME.$REALTIME_PREFIX.$CI_COMMIT_BRANCH
+    DOCKER_IMAGE_NAME_REALTIME_TEST: $REGISTRY_URL_DEV_IP/dev/$CI_PROJECT_NAME.$REALTIME_TEST_PREFIX.$CI_COMMIT_BRANCH
+  before_script: 
+    - pwd   
+    - docker login $REGISTRY_URL_DEV_IP -u=$REGISTRY_URL_USER -p=$REGISTRY_URL_PASS  
+
+  # All branches are tagged with $DOCKER_IMAGE_NAME (defaults to commit ref slug)
+  # Default branch is also tagged with `latest`
+  script:
+    - docker build --pull -t "$DOCKER_IMAGE_NAME_API" -f Dockerfile.Api .
+    - docker tag "$DOCKER_IMAGE_NAME_API:latest" "$DOCKER_IMAGE_NAME_API:1.0.$CI_PIPELINE_ID"
+    - docker push "$DOCKER_IMAGE_NAME_API"
+    - docker push "$DOCKER_IMAGE_NAME_API:1.0.$CI_PIPELINE_ID"
+    - echo "$DOCKER_IMAGE_NAME_API:1.0.$CI_PIPELINE_ID"
+    - docker build --pull -t "$DOCKER_IMAGE_NAME_PANEL" -f Dockerfile.Razor .
+    - docker push "$DOCKER_IMAGE_NAME_PANEL"
+    - echo "$DOCKER_IMAGE_NAME_PANEL:latest"
+    - docker build  --pull -t "$DOCKER_IMAGE_NAME_REALTIME" -f Dockerfile.SignalR .
+    - docker push "$DOCKER_IMAGE_NAME_REALTIME"
+    - echo "$DOCKER_IMAGE_NAME_REALTIME:latest"
+    - docker build --pull -t "$DOCKER_IMAGE_NAME_REALTIME_TEST" -f Dockerfile.SignalR.Client .
+    - docker push "$DOCKER_IMAGE_NAME_REALTIME_TEST"
+    - echo "$DOCKER_IMAGE_NAME_REALTIME_TEST:latest"    
+  # Run this job in a branch where a Dockerfile exists
+  only:   
+    - dev
+
+deploy_dev:
+  stage: deploy_dev 
+  tags:
+    - DEPLOY
+  image: 172.17.71.165:8082/base/alpine:latest
+  before_script:
+    - echo "$DOCKER_IMAGE_NAME_API:1.0.$CI_PIPELINE_ID"
+    - 'command -v ssh-agent >/dev/null || ( apk add --update openssh rsync )'
+    - eval $(ssh-agent -s)
+    - echo "$RUNNER2_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan 172.17.71.169 >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - ls -la
+   # - cd "04_Axon.NotifCenter.EndPoint/Axon.NotifCenter.EndPoint.Api"
+   # - 'sed -i "s/OLD_VALUE/NEW_VALUE/g" 04_Axon.NotifCenter.EndPoint/Axon.NotifCenter.EndPoint.Api/appsettings*.json'
+  script: 
+    - rsync -avzm --include='appsettings*.json' --include='*/' --exclude='*'  ./ root@172.17.71.169:/opt/$CI_PROJECT_NAME/
+    - ssh root@172.17.71.169 "bash /opt/variable.sh"
+    - ssh root@172.17.71.169 "cd /opt/$CI_PROJECT_NAME/        ; docker compose pull ; docker compose down ; docker compose up -d "
+  only:   
+    - dev
+  when: manual
+
+build_stg:
+  stage: build_stg
+  # Use the official docker image.
+  image: 172.17.71.165:8082/dev/base/docker:dind
+  tags: 
+    - BUILDER
+  services:
+    - 172.17.71.165:8082/dev/base/docker:dind
+  variables:
+    API_PREFIX: api
+    PANEL_PREFIX: panel
+    REALTIME_PREFIX: realtime
+    REALTIME_TEST_PREFIX: realtimetest
+    DOCKER_IMAGE_NAME_API: $REGISTRY_URL_STG/stg/$CI_PROJECT_NAME.$API_PREFIX.$CI_COMMIT_BRANCH
+    DOCKER_IMAGE_NAME_PANEL: $REGISTRY_URL_STG/stg/$CI_PROJECT_NAME.$PANEL_PREFIX.$CI_COMMIT_BRANCH
+    DOCKER_IMAGE_NAME_REALTIME: $REGISTRY_URL_STG/stg/$CI_PROJECT_NAME.$REALTIME_PREFIX.$CI_COMMIT_BRANCH
+    DOCKER_IMAGE_NAME_REALTIME_TEST: $REGISTRY_URL_STG/stg/$CI_PROJECT_NAME.$REALTIME_TEST_PREFIX.$CI_COMMIT_BRANCH
+  before_script: 
+    - pwd   
+    - docker login $REGISTRY_URL_STG  --username=$REG_USER_STG --password=$REG_PASS_STG
+  # All branches are tagged with $DOCKER_IMAGE_NAME (defaults to commit ref slug)
+  # Default branch is also tagged with `latest`
+  script:
+    - docker build --pull -t "$DOCKER_IMAGE_NAME_API" -f Dockerfile.Api .
+    - docker push "$DOCKER_IMAGE_NAME_API"
+    - echo "$DOCKER_IMAGE_NAME_API:latest"
+    - docker build --pull -t "$DOCKER_IMAGE_NAME_PANEL" -f Dockerfile.Razor .
+    - docker push "$DOCKER_IMAGE_NAME_PANEL"
+    - echo "$DOCKER_IMAGE_NAME_PANEL:latest"
+    - docker build  --pull -t "$DOCKER_IMAGE_NAME_REALTIME" -f Dockerfile.SignalR .
+    - docker push "$DOCKER_IMAGE_NAME_REALTIME"
+    - echo "$DOCKER_IMAGE_NAME_REALTIME:latest"
+    - docker build --pull -t "$DOCKER_IMAGE_NAME_REALTIME_TEST" -f Dockerfile.SignalR.Client .
+    - docker push "$DOCKER_IMAGE_NAME_REALTIME_TEST"
+    - echo "$DOCKER_IMAGE_NAME_REALTIME_TEST:latest"    
+  # Run this job in a branch where a Dockerfile exists
+  only: 
+    - stg
+
+
+deploy_stg:
+  stage: deploy_stg 
+  tags:
+    - DEPLOY
+  image: 172.17.71.165:8082/base/alpine:latest
+  before_script:
+    - 'command -v ssh-agent >/dev/null || ( apk add --update openssh rsync )'
+    - eval $(ssh-agent -s)
+    - echo "$RUNNER2_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan 172.17.71.11 >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - ls -la
+  script: 
+    - rsync -avzm --include='appsettings*.json' --include='*/' --exclude='*'  ./ root@172.17.71.11:/opt/$CI_PROJECT_NAME/
+    - ssh root@172.17.71.11 "bash /opt/variable.sh"
+    - ssh root@172.17.71.11 "cd /opt/$CI_PROJECT_NAME/        ; docker compose pull ; docker compose down ; docker compose up -d "
+  only:   
+    - stg
+  when: manual  
+
+
+
+
+
+build_prd:
+  stage: build_prd
+  # Use the official docker image.
+  image: 172.17.71.165:8082/dev/base/docker:dind
+  tags: 
+    - BUILDER
+  services:
+    - 172.17.71.165:8082/dev/base/docker:dind
+  variables:
+    API_PREFIX: api
+    PANEL_PREFIX: panel
+    REALTIME_PREFIX: realtime
+    REALTIME_TEST_PREFIX: realtimetest
+    DOCKER_IMAGE_NAME_API: $REGISTRY_URL_STG/prd/$CI_PROJECT_NAME.$API_PREFIX.$CI_COMMIT_BRANCH
+    DOCKER_IMAGE_NAME_PANEL: $REGISTRY_URL_STG/prd/$CI_PROJECT_NAME.$PANEL_PREFIX.$CI_COMMIT_BRANCH
+    DOCKER_IMAGE_NAME_REALTIME: $REGISTRY_URL_STG/prd/$CI_PROJECT_NAME.$REALTIME_PREFIX.$CI_COMMIT_BRANCH
+    DOCKER_IMAGE_NAME_REALTIME_TEST: $REGISTRY_URL_STG/prd/$CI_PROJECT_NAME.$REALTIME_TEST_PREFIX.$CI_COMMIT_BRANCH
+  before_script: 
+    - pwd   
+    - docker login $REGISTRY_URL_STG  --username=$REG_USER_STG --password=$REG_PASS_STG
+  # All branches are tagged with $DOCKER_IMAGE_NAME (defaults to commit ref slug)
+  # Default branch is also tagged with `latest`
+  script:
+    - docker build --pull -t "$DOCKER_IMAGE_NAME_API" -f Dockerfile.Api .
+    - docker push "$DOCKER_IMAGE_NAME_API"
+    - echo "$DOCKER_IMAGE_NAME_API:latest"
+    - docker build --pull -t "$DOCKER_IMAGE_NAME_PANEL" -f Dockerfile.Razor .
+    - docker push "$DOCKER_IMAGE_NAME_PANEL"
+    - echo "$DOCKER_IMAGE_NAME_PANEL:latest"
+    - docker build  --pull -t "$DOCKER_IMAGE_NAME_REALTIME" -f Dockerfile.SignalR .
+    - docker push "$DOCKER_IMAGE_NAME_REALTIME"
+    - echo "$DOCKER_IMAGE_NAME_REALTIME:latest"
+    - docker build --pull -t "$DOCKER_IMAGE_NAME_REALTIME_TEST" -f Dockerfile.SignalR.Client .
+    - docker push "$DOCKER_IMAGE_NAME_REALTIME_TEST"
+    - echo "$DOCKER_IMAGE_NAME_REALTIME_TEST:latest"    
+  # Run this job in a branch where a Dockerfile exists
+  only: 
+    - prd
+
+
+deploy_prd:
+  stage: deploy_prd 
+  tags:
+    - DEPLOY
+  image: 172.17.71.165:8082/base/alpine:latest
+  before_script:
+    - 'command -v ssh-agent >/dev/null || ( apk add --update openssh rsync )'
+    - eval $(ssh-agent -s)
+    - echo "$RUNNER2_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan 172.20.5.10 >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - ls -la
+  script: 
+    - rsync -avzm --include='appsettings*.json' --include='*/' --exclude='*'  ./ root@172.20.5.10:/opt/$CI_PROJECT_NAME/
+    - ssh root@172.20.5.10 "bash /opt/variable.sh"
+    - ssh root@172.20.5.10 "cd /opt/$CI_PROJECT_NAME/        ; docker compose pull ; docker compose down ; docker compose up -d "
+  only:   
+    - prd
+  when: manual  
+

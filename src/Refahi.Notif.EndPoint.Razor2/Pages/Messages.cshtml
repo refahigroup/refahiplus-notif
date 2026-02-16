@@ -1,0 +1,88 @@
+﻿@page "/Messages"
+@model MessagesModel
+@{
+    ViewData["Title"] = "Home page";
+}
+<style>
+    .custab {
+        border: 1px solid #ccc;
+        padding: 5px;
+        margin: 5% 0;
+        box-shadow: 3px 3px 2px #ccc;
+        transition: 0.5s;
+    }
+
+        .custab:hover {
+            box-shadow: 3px 3px 0px transparent;
+            transition: 0.5s;
+        }
+
+        thead{
+            font-weight:bold;
+        }
+</style>
+
+<div class="container">
+    <div class="form-group row custom-upload">
+
+
+        <div class="col-6">
+            <form class="row" action="/messages" method="get" >
+                <div class="form-group mb-2 col-6">
+                    <input input type="text" class="form-control "
+                    style="direction:ltr;text-align:left"
+                    placeholder="موبایل"
+                    name="phonenumber" value="@Request.Query["phonenumber"].ToString()">
+
+                </div>
+
+                <button type="submit" class="btn btn-info mb-2 col-auto">جستجو</button>
+            </form>
+
+
+           <!-- /div[data-role="dynamic-fields"] -->
+        </div>
+        
+    </div>
+
+
+    <div class="row  col-md-offset-2 custyle">
+        <table class="table table-striped custab">
+            <thead>
+                <tr>
+                    <td>شناسه ارسال</td>
+                    <td>تاریخ ارسال</td>
+
+                    <td>موبایل</td>
+                    <td>متن پیام</td>
+                    <td>وضعیت</td>
+                    <td>زمان تحویل</td>
+                    <td>درگاه</td>
+                    <td>تعداد تلاش مجدد</td>
+                    <td>
+                        سابقه
+                    </td>
+                </tr>
+            </thead>
+            @foreach (var item in Model.List.Select(x=>x.Sms))
+            {
+                <tr>
+                    <td>@item.IdInProvider</td>
+
+                    <td>@item.SendTime.ToPersian(true)</td>
+
+                    <td>@string.Join(" - ",item.PhoneNumbers)</td>
+                    <td>@item.Body</td>
+                    <td>@Html.Raw(item.Status.GetLabel())</td>
+                    <td>@item.DeliverTime.ToPersian(true)</td>
+                    <td>@Html.Raw(item.Gateway.GetLabel())</td>
+                    <td>@item.RetryCount</td>
+
+                    <td>
+                        <a href="/messages?phonenumber=@item.PhoneNumbers.FirstOrDefault()" class="btn btn-outline-secondary">جستجو</a>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>

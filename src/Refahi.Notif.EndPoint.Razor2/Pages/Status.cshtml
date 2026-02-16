@@ -1,0 +1,32 @@
+﻿@page "/status"
+@model StatusModel
+@{
+}
+
+<style>
+    .custab {
+        border: 1px solid #ccc;
+        padding: 5px;
+        margin: 5% 0;
+        box-shadow: 3px 3px 2px #ccc;
+        transition: 0.5s;
+    }
+
+        .custab:hover {
+            box-shadow: 3px 3px 0px transparent;
+            transition: 0.5s;
+        }
+
+    thead {
+        font-weight: bold;
+    }
+</style>
+
+<div class="container">
+    
+    <div class="alert alert-@(Model.IsOk?"success":"danger")">@(Model.IsOk?"سرویس فعال است":"سرویس دارای مشکل است")</div>
+
+        <div class="alert alert-@(Model.IsKaveNegarOk?"success":"danger")">@(Model.IsKaveNegarOk?"اعتبار کاوه نگار کافی است":"اعتبار کاوه نگار نیاز به شارژ دارد")</div>
+
+</div>
+

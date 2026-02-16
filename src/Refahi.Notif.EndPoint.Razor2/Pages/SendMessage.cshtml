@@ -1,0 +1,89 @@
+﻿@page "/SendMessage"
+@model SendMessageModel
+@{
+}
+
+<div class="container">
+    <div class="form-group row custom-upload">
+
+
+        <div class="col-6">
+            <h4>ارسال پیام اعتبارسنجی</h4>
+            <form class="row"  method="post">
+                <div class="form-group mb-2 col-6">
+                    <input type="text" class="form-control "
+                           style="direction:ltr;text-align:left"
+                           placeholder="موبایل"
+                           required
+                           name="phonenumber">
+
+                    <br />
+
+                    <input type="text" class="form-control "
+                           style="direction:ltr;text-align:left"
+                           placeholder="کد"
+                           required
+
+                           name="code">
+                    <br />
+
+                    <select class="form-select" name="template">
+                        @foreach (var item in (VerifySmsTemplate[])Enum.GetValues(typeof(VerifySmsTemplate)))
+                        {
+                            <option value="@((int)item)">
+                                @item.GetDisplayName()
+                            </option>
+                        }
+                    </select>
+                    <br />
+                    <button type="submit" disabled="disabled" class="btn btn-primary b-2 col-auto">ارسال</button>
+                </div>
+
+                
+            </form>
+
+
+            <!-- /div[data-role="dynamic-fields"] -->
+        </div>
+          <div class="col-6">
+              <h4>
+                  ارسال پیام اطلاع رسانی
+              </h4>
+            <form class="row"  method="post">
+                <div class="form-group mb-2 col-6">
+                    <input type="text" class="form-control "
+                           style="direction:ltr;text-align:left"
+                           placeholder="موبایل"
+                           required
+                           name="phonenumber">
+
+                    <br />
+
+                    <textarea type="text" class="form-control "
+                           style="direction:ltr;text-align:left"
+                           placeholder="متن"
+                           required
+
+                           name="body">
+                           </textarea>
+                    <br />
+                    <select class="form-select" name="smsgateway">
+                        @foreach (var item in (SmsGateway[])Enum.GetValues(typeof(SmsGateway)))
+                        {
+                            <option value="@((int)item)">
+                                @item.GetDisplayName()
+                            </option>
+                        }
+                    </select>
+                    <br />
+                    <button type="submit" class="btn btn-primary b-2 col-auto" asp-page-handler="Message">ارسال</button>
+                </div>
+
+                
+            </form>
+
+
+            <!-- /div[data-role="dynamic-fields"] -->
+        </div>
+    </div>
+</div>

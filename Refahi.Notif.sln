@@ -1,0 +1,192 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.4.11506.43 insiders
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01_Domain", "01_Domain", "{EAAD8C4C-B952-4D56-9521-72A882FC8449}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02_Infrastructure", "02_Infrastructure", "{7D8AA1BD-DD7E-4F7D-B24D-B531BCCC1A88}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "03_Application", "03_Application", "{E418F097-3C44-44F8-A737-E178E6DAD65A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "04_EndPoint", "04_EndPoint", "{D0FC9966-24CD-41DA-A2B2-DDD85A539740}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Refahi.Notif.Domain.Core", "src\Refahi.Notif.Domain.Core\Refahi.Notif.Domain.Core.csproj", "{AACD56D3-CAD3-46A9-8B56-DF434273F481}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Refahi.Notif.Infrastructure.Persistence.SqlServer", "src\Refahi.Notif.Infrastructure.Persistence.SqlServer\Refahi.Notif.Infrastructure.Persistence.SqlServer.csproj", "{C21AB635-E605-482A-A510-06CABBB5BBA1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Refahi.Notif.Infrastructure.Consumer", "src\Refahi.Notif.Infrastructure.Consumer\Refahi.Notif.Infrastructure.Consumer.csproj", "{E91FE74F-008E-4FC7-A3FB-6B591DAA8B77}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Refahi.Notif.Application.Contract", "src\Refahi.Notif.Application.Contract\Refahi.Notif.Application.Contract.csproj", "{6CD0D5F9-6FCE-401C-9BDD-71832038180E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Refahi.Notif.Application.Service", "src\Refahi.Notif.Application.Service\Refahi.Notif.Application.Service.csproj", "{D08BD8FF-59DB-4B87-9A1B-4A0686ED3971}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Refahi.Notif.EndPoint.Api", "src\Refahi.Notif.EndPoint.Api\Refahi.Notif.EndPoint.Api.csproj", "{A541173A-4B12-4852-8D32-73EAB318EF92}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Refahi.Notif.Infrastructure.Messaging.PushNotification", "src\Refahi.Notif.Infrastructure.Messaging\Refahi.Notif.Infrastructure.Messaging.PushNotification.csproj", "{C9AB4EC8-C2DE-4B67-BDE0-C6752740DFE0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00_Common", "00_Common", "{BD0B66E4-9629-4073-A010-32518F9A5010}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Refahi.Notif.EndPoint.Razor", "src\Refahi.Notif.EndPoint.Razor2\Refahi.Notif.EndPoint.Razor.csproj", "{CA5F80AE-CD5E-46AB-B921-862366EACE9C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Refahi.Notif.EndPoint.PushProxy", "src\Refahi.Notif.EndPoint.PushProxy\Refahi.Notif.EndPoint.PushProxy.csproj", "{F57AB428-2D6B-45D9-9A23-948CCF6F48A8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Refahi.Notif.Infrastructure.Messaging.Email", "src\Refahi.Notif.Infrastructure.Messaging.Email\Refahi.Notif.Infrastructure.Messaging.Email.csproj", "{5338BCCB-A2C4-46E4-B405-20148F087E59}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Refahi.Notif.Infrastructure.Messaging.Sms", "src\Refahi.Notif.Infrastructure.Messaging.Sms\Refahi.Notif.Infrastructure.Messaging.Sms.csproj", "{7094BACF-D29A-424B-B65D-5FE3895AEE44}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Refahi.Notif.EndPoint.SignalR", "src\Refahi.Notif.EndPoint.SignalR\Refahi.Notif.EndPoint.SignalR.csproj", "{6C431373-A784-4B5C-A158-CC69664C99F7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Refahi.Notif.EndPoint.SignalR.Client", "src\Refahi.Notif.EndPoint.SignalR.Client\Refahi.Notif.EndPoint.SignalR.Client.csproj", "{1C558CA4-B257-4A96-A61A-2F6B53844D12}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Refahi.Notif.Infrastructure.Messaging.RealTime", "src\Refahi.Notif.Infrastructure.Messaging.RealTime\Refahi.Notif.Infrastructure.Messaging.RealTime.csproj", "{991A67D0-1855-4C3F-8983-05F1B519FF16}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Refahi.Notif.EndPoint.ApiCallBack", "src\Refahi.Notif.EndPoint.ApiCallBack\Refahi.Notif.EndPoint.ApiCallBack.csproj", "{DE655853-4D56-40DB-B1EA-A86FB5549DC0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Refahi.Notif.Infrastructure.Messaging.Telegram", "src\Refahi.Notif.Infrastructure.Messaging.Telegram\Refahi.Notif.Infrastructure.Messaging.Telegram.csproj", "{62858749-64E8-4D07-ACF9-8C67747B546D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Refahi.Notif.Messages", "src\Refahi.Notif.Messages\Refahi.Notif.Messages.csproj", "{9E0B9A48-6C6B-47E2-979C-70AAEE40DF6D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Refahi.Notif.Domain.Contract", "src\Refahi.Notif.Domain.Contract\Refahi.Notif.Domain.Contract.csproj", "{6D640FF3-C913-44DD-A6C2-20607A5CE61E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Refahi.Notif.Infrastructure.Persistence.Contract", "src\Refahi.Notif.Infrastructure.Persistence.Contract\Refahi.Notif.Infrastructure.Persistence.Contract.csproj", "{AA948C63-F1B2-4F91-B40F-5899EA8E9CFD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Refahi.Notif.Infrastructure.Persistence.Postgres", "src\Refahi.Notif.Infrastructure.Persistence.Postgres\Refahi.Notif.Infrastructure.Persistence.Postgres.csproj", "{CE06994A-F8C2-4B27-B674-97266D7D82FE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Refahi.Notif.Infrastructure.Persistence", "src\Refahi.Notif.Infrastructure.Persistence\Refahi.Notif.Infrastructure.Persistence.csproj", "{0501D6E9-9E01-4537-AE27-D80ED6ABD7E7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Refahi.Notif.Infrastructure.RedisCache", "src\Refahi.Notif.Infrastructure.RedisCache\Refahi.Notif.Infrastructure.RedisCache.csproj", "{3CFB1329-2CA6-4575-A2BB-D7420AB75367}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Refahi.Notif.Infrastructure.MemoryCache", "src\Refahi.Notif.Infrastructure.MemoryCache\Refahi.Notif.Infrastructure.MemoryCache.csproj", "{84AC41AD-F194-42E0-99BC-D6B825DF42C5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AACD56D3-CAD3-46A9-8B56-DF434273F481}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AACD56D3-CAD3-46A9-8B56-DF434273F481}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AACD56D3-CAD3-46A9-8B56-DF434273F481}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AACD56D3-CAD3-46A9-8B56-DF434273F481}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C21AB635-E605-482A-A510-06CABBB5BBA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C21AB635-E605-482A-A510-06CABBB5BBA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C21AB635-E605-482A-A510-06CABBB5BBA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C21AB635-E605-482A-A510-06CABBB5BBA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E91FE74F-008E-4FC7-A3FB-6B591DAA8B77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E91FE74F-008E-4FC7-A3FB-6B591DAA8B77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E91FE74F-008E-4FC7-A3FB-6B591DAA8B77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E91FE74F-008E-4FC7-A3FB-6B591DAA8B77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CD0D5F9-6FCE-401C-9BDD-71832038180E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CD0D5F9-6FCE-401C-9BDD-71832038180E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CD0D5F9-6FCE-401C-9BDD-71832038180E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CD0D5F9-6FCE-401C-9BDD-71832038180E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D08BD8FF-59DB-4B87-9A1B-4A0686ED3971}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D08BD8FF-59DB-4B87-9A1B-4A0686ED3971}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D08BD8FF-59DB-4B87-9A1B-4A0686ED3971}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D08BD8FF-59DB-4B87-9A1B-4A0686ED3971}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A541173A-4B12-4852-8D32-73EAB318EF92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A541173A-4B12-4852-8D32-73EAB318EF92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A541173A-4B12-4852-8D32-73EAB318EF92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A541173A-4B12-4852-8D32-73EAB318EF92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9AB4EC8-C2DE-4B67-BDE0-C6752740DFE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9AB4EC8-C2DE-4B67-BDE0-C6752740DFE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9AB4EC8-C2DE-4B67-BDE0-C6752740DFE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9AB4EC8-C2DE-4B67-BDE0-C6752740DFE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA5F80AE-CD5E-46AB-B921-862366EACE9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA5F80AE-CD5E-46AB-B921-862366EACE9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA5F80AE-CD5E-46AB-B921-862366EACE9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA5F80AE-CD5E-46AB-B921-862366EACE9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F57AB428-2D6B-45D9-9A23-948CCF6F48A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F57AB428-2D6B-45D9-9A23-948CCF6F48A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F57AB428-2D6B-45D9-9A23-948CCF6F48A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F57AB428-2D6B-45D9-9A23-948CCF6F48A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5338BCCB-A2C4-46E4-B405-20148F087E59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5338BCCB-A2C4-46E4-B405-20148F087E59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5338BCCB-A2C4-46E4-B405-20148F087E59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5338BCCB-A2C4-46E4-B405-20148F087E59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7094BACF-D29A-424B-B65D-5FE3895AEE44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7094BACF-D29A-424B-B65D-5FE3895AEE44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7094BACF-D29A-424B-B65D-5FE3895AEE44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7094BACF-D29A-424B-B65D-5FE3895AEE44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C431373-A784-4B5C-A158-CC69664C99F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C431373-A784-4B5C-A158-CC69664C99F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C431373-A784-4B5C-A158-CC69664C99F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C431373-A784-4B5C-A158-CC69664C99F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C558CA4-B257-4A96-A61A-2F6B53844D12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C558CA4-B257-4A96-A61A-2F6B53844D12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C558CA4-B257-4A96-A61A-2F6B53844D12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C558CA4-B257-4A96-A61A-2F6B53844D12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{991A67D0-1855-4C3F-8983-05F1B519FF16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{991A67D0-1855-4C3F-8983-05F1B519FF16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{991A67D0-1855-4C3F-8983-05F1B519FF16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{991A67D0-1855-4C3F-8983-05F1B519FF16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE655853-4D56-40DB-B1EA-A86FB5549DC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE655853-4D56-40DB-B1EA-A86FB5549DC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE655853-4D56-40DB-B1EA-A86FB5549DC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE655853-4D56-40DB-B1EA-A86FB5549DC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62858749-64E8-4D07-ACF9-8C67747B546D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62858749-64E8-4D07-ACF9-8C67747B546D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62858749-64E8-4D07-ACF9-8C67747B546D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62858749-64E8-4D07-ACF9-8C67747B546D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E0B9A48-6C6B-47E2-979C-70AAEE40DF6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E0B9A48-6C6B-47E2-979C-70AAEE40DF6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E0B9A48-6C6B-47E2-979C-70AAEE40DF6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E0B9A48-6C6B-47E2-979C-70AAEE40DF6D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D640FF3-C913-44DD-A6C2-20607A5CE61E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D640FF3-C913-44DD-A6C2-20607A5CE61E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D640FF3-C913-44DD-A6C2-20607A5CE61E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D640FF3-C913-44DD-A6C2-20607A5CE61E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA948C63-F1B2-4F91-B40F-5899EA8E9CFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA948C63-F1B2-4F91-B40F-5899EA8E9CFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA948C63-F1B2-4F91-B40F-5899EA8E9CFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA948C63-F1B2-4F91-B40F-5899EA8E9CFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE06994A-F8C2-4B27-B674-97266D7D82FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE06994A-F8C2-4B27-B674-97266D7D82FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE06994A-F8C2-4B27-B674-97266D7D82FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE06994A-F8C2-4B27-B674-97266D7D82FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0501D6E9-9E01-4537-AE27-D80ED6ABD7E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0501D6E9-9E01-4537-AE27-D80ED6ABD7E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0501D6E9-9E01-4537-AE27-D80ED6ABD7E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0501D6E9-9E01-4537-AE27-D80ED6ABD7E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CFB1329-2CA6-4575-A2BB-D7420AB75367}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CFB1329-2CA6-4575-A2BB-D7420AB75367}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CFB1329-2CA6-4575-A2BB-D7420AB75367}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CFB1329-2CA6-4575-A2BB-D7420AB75367}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84AC41AD-F194-42E0-99BC-D6B825DF42C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84AC41AD-F194-42E0-99BC-D6B825DF42C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84AC41AD-F194-42E0-99BC-D6B825DF42C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84AC41AD-F194-42E0-99BC-D6B825DF42C5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{AACD56D3-CAD3-46A9-8B56-DF434273F481} = {EAAD8C4C-B952-4D56-9521-72A882FC8449}
+		{C21AB635-E605-482A-A510-06CABBB5BBA1} = {7D8AA1BD-DD7E-4F7D-B24D-B531BCCC1A88}
+		{E91FE74F-008E-4FC7-A3FB-6B591DAA8B77} = {7D8AA1BD-DD7E-4F7D-B24D-B531BCCC1A88}
+		{6CD0D5F9-6FCE-401C-9BDD-71832038180E} = {E418F097-3C44-44F8-A737-E178E6DAD65A}
+		{D08BD8FF-59DB-4B87-9A1B-4A0686ED3971} = {E418F097-3C44-44F8-A737-E178E6DAD65A}
+		{A541173A-4B12-4852-8D32-73EAB318EF92} = {D0FC9966-24CD-41DA-A2B2-DDD85A539740}
+		{C9AB4EC8-C2DE-4B67-BDE0-C6752740DFE0} = {7D8AA1BD-DD7E-4F7D-B24D-B531BCCC1A88}
+		{CA5F80AE-CD5E-46AB-B921-862366EACE9C} = {D0FC9966-24CD-41DA-A2B2-DDD85A539740}
+		{F57AB428-2D6B-45D9-9A23-948CCF6F48A8} = {D0FC9966-24CD-41DA-A2B2-DDD85A539740}
+		{5338BCCB-A2C4-46E4-B405-20148F087E59} = {7D8AA1BD-DD7E-4F7D-B24D-B531BCCC1A88}
+		{7094BACF-D29A-424B-B65D-5FE3895AEE44} = {7D8AA1BD-DD7E-4F7D-B24D-B531BCCC1A88}
+		{6C431373-A784-4B5C-A158-CC69664C99F7} = {D0FC9966-24CD-41DA-A2B2-DDD85A539740}
+		{1C558CA4-B257-4A96-A61A-2F6B53844D12} = {D0FC9966-24CD-41DA-A2B2-DDD85A539740}
+		{991A67D0-1855-4C3F-8983-05F1B519FF16} = {7D8AA1BD-DD7E-4F7D-B24D-B531BCCC1A88}
+		{DE655853-4D56-40DB-B1EA-A86FB5549DC0} = {D0FC9966-24CD-41DA-A2B2-DDD85A539740}
+		{62858749-64E8-4D07-ACF9-8C67747B546D} = {7D8AA1BD-DD7E-4F7D-B24D-B531BCCC1A88}
+		{9E0B9A48-6C6B-47E2-979C-70AAEE40DF6D} = {BD0B66E4-9629-4073-A010-32518F9A5010}
+		{6D640FF3-C913-44DD-A6C2-20607A5CE61E} = {EAAD8C4C-B952-4D56-9521-72A882FC8449}
+		{AA948C63-F1B2-4F91-B40F-5899EA8E9CFD} = {7D8AA1BD-DD7E-4F7D-B24D-B531BCCC1A88}
+		{CE06994A-F8C2-4B27-B674-97266D7D82FE} = {7D8AA1BD-DD7E-4F7D-B24D-B531BCCC1A88}
+		{0501D6E9-9E01-4537-AE27-D80ED6ABD7E7} = {7D8AA1BD-DD7E-4F7D-B24D-B531BCCC1A88}
+		{3CFB1329-2CA6-4575-A2BB-D7420AB75367} = {7D8AA1BD-DD7E-4F7D-B24D-B531BCCC1A88}
+		{84AC41AD-F194-42E0-99BC-D6B825DF42C5} = {7D8AA1BD-DD7E-4F7D-B24D-B531BCCC1A88}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {74227F49-B323-4679-BCF1-457F223AFCB0}
+	EndGlobalSection
+EndGlobal
