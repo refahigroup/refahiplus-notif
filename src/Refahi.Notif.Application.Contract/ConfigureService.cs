@@ -1,6 +1,7 @@
 ﻿
 using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
 using System.Reflection;
 
 namespace Refahi.Notif.Application.Contract
@@ -11,10 +12,13 @@ namespace Refahi.Notif.Application.Contract
         {
 
 
-            var mapperConfig = new MapperConfiguration(mc =>
-            {
-                mc.AddMaps(Assembly.GetExecutingAssembly());
-            });
+            var mapperConfig = new MapperConfiguration(
+                mc =>
+                {
+                    mc.AddMaps(Assembly.GetExecutingAssembly());
+                }, 
+                NullLoggerFactory.Instance
+            );
 
             IMapper mapper = mapperConfig.CreateMapper();
             services.AddSingleton(mapper);

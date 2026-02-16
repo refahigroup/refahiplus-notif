@@ -1,10 +1,8 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Refahi.Notif.Domain.Contract;
 using Refahi.Notif.Domain.Contract.Messaging;
 using Refahi.Notif.Domain.Core.Utility;
-using Refahi.Notif.Infrastructure.Messaging.Sms;
 using Refahi.Notif.Messages.NotifCenter.Enums;
 using System.Net.Http.Headers;
 using System.Text;

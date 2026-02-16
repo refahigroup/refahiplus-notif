@@ -1,121 +1,227 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Refahi.Notif.Domain.Contract.Messaging;
 using Refahi.Notif.Domain.Core.Utility;
-using Refahi.Notif.Infrastructure.Messaging.Sms;
-using Refahi.Notif.Infrastructure.Messaging.Sms.Mediana.Responses;
 using Refahi.Notif.Messages.NotifCenter.Enums;
+using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace Refahi.Notif.Infrastructure.Messaging.Sms.Mediana
+namespace Refahi.Notif.Infrastructure.Messaging.Sms.Mediana;
+
+public class MedianaSmsSender : ISmsSender
 {
-    public class MedianaSmsSender : ISmsSender
+    private readonly MedianaSmsConfiguration _config;
+    private readonly HttpClient _client;
+    private readonly ILogger<MedianaSmsSender> _logger;
+
+    private const string SendSmsEndpoint = "/sms/v1/send/sms";
+    private const string SendPatternEndpoint = "/sms/v1/send/pattern";
+
+    public SmsGateway Gateway => SmsGateway.Mediana;
+
+    public MedianaSmsSender(MedianaSmsConfiguration config, HttpClient client, ILogger<MedianaSmsSender> logger)
     {
-        private readonly MedianaSmsConfiguration _medianaSmsConfig;
-        private readonly HttpClient _client;
-        private readonly ILogger<MedianaSmsSender> _logger;
-        private readonly SmsTemplate _smsConfig;
+        _config = config;
+        _client = client;
+        _logger = logger;
+    }
 
-        public MedianaSmsSender(
-            MedianaSmsConfiguration medianaSmsConfig,
-            HttpClient client,
-            ILogger<MedianaSmsSender> logger,
-            SmsTemplate smsComfig
-        )
+
+    private static string NormalizePhoneNumber(string phoneNumber)
+    {
+        // Remove any non-digit characters
+        var digits = new string(phoneNumber.Where(char.IsDigit).ToArray());
+
+        // Handle different formats:
+        // 09XXXXXXXXX -> 989XXXXXXXXX
+        // 9XXXXXXXXX -> 989XXXXXXXXX
+        // 00989XXXXXXXXX -> 989XXXXXXXXX
+        // +989XXXXXXXXX -> 989XXXXXXXXX
+        // 989XXXXXXXXX -> 989XXXXXXXXX
+        
+        if (digits.StartsWith("00"))
         {
-            _medianaSmsConfig = medianaSmsConfig;
-            _client = client;
-            _logger = logger;
-            _smsConfig = smsComfig;
+            digits = digits.Substring(2);
+        }
+        
+        if (digits.StartsWith("0"))
+        {
+            return "98" + digits.Substring(1);
+        }
+        else if (digits.StartsWith("98"))
+        {
+            return digits;
+        }
+        else
+        {
+            return "98" + digits;
+        }
+    }
+    private string? GetPatternCode(string templateName)
+    {
+        // TODO: Map template names to actual pattern codes from Mediana panel
+        // For now, return null to use fallback simple SMS
+        return null;
+    }
+    private string BuildTemplateMessage(string templateName, Dictionary<string, string> parameters)
+    {
+        return templateName switch
+        {
+            "VerificationCode" or "verification-code" => 
+                SmsTemplates.VerificationCode(
+                    parameters.GetValueOrDefault("code", "N/A"),
+                    int.TryParse(parameters.GetValueOrDefault("validMinutes", "5"), out var mins) ? mins : 5
+                ),
+            
+            "Welcome" or "welcome" => 
+                SmsTemplates.Welcome(parameters.GetValueOrDefault("username", "کاربر گرامی")),
+            
+            "PasswordReset" or "password-reset" => 
+                SmsTemplates.PasswordReset(parameters.GetValueOrDefault("code", "N/A")),
+            
+            "SecurityAlert" or "security-alert" => 
+                SmsTemplates.SecurityAlert(parameters.GetValueOrDefault("deviceInfo", "دستگاه ناشناس")),
+            
+            "Notification" or "notification" => 
+                SmsTemplates.Notification(
+                    parameters.GetValueOrDefault("title", "اعلان"),
+                    parameters.GetValueOrDefault("message", "")
+                ),
+            
+            _ => string.Join("\n", parameters.Select(p => $"{p.Key}: {p.Value}"))
+        };
+    }
+    private Dictionary<string, string> GetHttpHeaders()
+    {
+        Dictionary<string, string> headers = new Dictionary<string, string>();
+        headers.Add("X-API-KEY", _config.ApiKey);
+        headers.Add("Accept", "application/json");
 
-            _client.DefaultRequestHeaders.Add("apikey", _medianaSmsConfig.Token);
+        return headers;
+    }
+
+    public async Task<(string, bool)> SendAsync(string[] phoneNumbers, string message, string? sender)
+    {
+        string msg = "";
+
+        if (phoneNumbers.Length == 0)
+            msg = "No phone numbers provided for SMS";
+        else if (phoneNumbers.Length > 100)
+            msg = $"Maximum 100 recipients allowed per SMS. Provided: {phoneNumbers.Length}";
+
+
+        if(!string.IsNullOrEmpty(msg))
+        {
+            _logger.LogWarning(msg);
+            return (msg, false);
         }
 
-        public SmsGateway Gateway => SmsGateway.Mediana;
 
-        public async Task<(string, bool)> SendAsync(string[] phoneNumbers, string message, string? sender)
+        var finalMessage = message.Contains("لغو11") ? message : $"{message}\n\nلغو11";
+
+        var url = new Uri(new Uri(_config.BaseUrl), SendSmsEndpoint);
+
+        var data = new
         {
-            /*
-                {
-                  "recipient": [
-                    "+989120000000"
-                  ],
-                  "sender": "+983000505",
-                  "time": "2023-03-21T09:12:50.824Z",
-                  "message": "ارتباط بسازید. مدیانا"
-                }
-            */
+            Type = _config.MessageType,
+            Recipients = phoneNumbers.Select(NormalizePhoneNumber).ToArray(),
+            MessageText = finalMessage
+        };
 
+        var result = await _client.PostString(url.ToString(), data, GetHttpHeaders());
 
-            var url = new Uri(new Uri(_medianaSmsConfig.BaseUrl), "sms/send/webservice/single");
+        MedianaSmsResponse response;
 
-            var data = new
+        try
+        {
+            response = result.DeSerilize<MedianaSmsResponse>();
+
+            if (response == null || response.Data == null || !response.Data.Succeed)
+                throw new Exception("Response Not Valid");
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error in Deserilize Sms Result");
+            return (string.Empty, true);
+        }
+        //if (response.Code == 400)
+        //{
+        //    _logger.LogError($"Bad request: ${string.Join(",", phoneNumbers)}");
+        //    return (string.Empty, true);
+        //}
+        //if (response.Code == 401)
+        //{
+        //    _logger.LogError($"Permission Denied: ${string.Join(",", phoneNumbers)}");
+        //    return (string.Empty, true);
+        //}
+        //if (response.Code == 403)
+        //{
+        //    _logger.LogError($"Forbiden: ${string.Join(",", phoneNumbers)}");
+        //    return (string.Empty, true);
+        //}
+
+        //if (response.Code != 200)
+        //    throw new Exception($"Error In Send Sms : {response.Code} - {response.Status}");
+
+        return (response.Data.RequestId.ToString(), false);
+    }
+    public async Task<string> VerifyAsync(VerifySmsTemplate template, string phoneNumber, string code1, string? code2 = null, string? code3 = null, bool needTag = true)
+    {
+        string templateName = "VerificationCode";
+
+        try
+        {
+
+            Dictionary<string, string> parameters = new Dictionary<string, string>();
+            parameters.Add("code", code1);
+
+            var data = new MedianaSendPatternRequest
             {
-                Recipient = phoneNumbers,
-                _medianaSmsConfig.Sender,
-                Message = message
+                Type = _config.MessageType,
+                Recipients = new[] { NormalizePhoneNumber(phoneNumber) },
+                PatternCode = templateName,
+                Parameters = parameters
             };
 
+            var url = new Uri(new Uri(_config.BaseUrl), SendPatternEndpoint);
 
+            var result = await _client.PostString(url.ToString(), data, GetHttpHeaders());
 
-            var request = new HttpRequestMessage(HttpMethod.Post, url.ToString());
-            request.Content = new StringContent(data.Serilize());
-            request.Headers.Add("apikey", _medianaSmsConfig.Token);
-
-            var result = await _client.PostString(url.ToString(), data);
-
-
-            MedianaReponse<SendSmsResponseData> response;
+            MedianaReponse<MedianaSmsResponse> response;
 
             try
             {
-                //این قسمت از بلوک بیرونه چون خطا در این حالات نباید باعث تکرار عملیات بشه
-                response = result.DeSerilize<MedianaReponse<SendSmsResponseData>>();
+                response = result.DeSerilize<MedianaReponse<MedianaSmsResponse>>();
 
-                if (response.Data == null || response.Data.MessageId == 0)
+                if (response == null || response.Data == null || response.Data.Data == null || !response.Data.Data.Succeed)
                     throw new Exception("Response Not Valid");
+
+                return string.Empty;
 
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error in Deserilize Sms Result");
-                return (null, false);
-            }
+                _logger.LogError(ex, "Exception while sending pattern SMS, falling back to simple SMS");
 
-            //wrong number
-            if (response.Code == 400)
-            {
-                _logger.LogError($"Bad request: ${string.Join(",", phoneNumbers)}");
-                return (null, true);
-            }
-            if (response.Code == 401)
-            {
-                _logger.LogError($"Permission Denied: ${string.Join(",", phoneNumbers)}");
-                return (null, true);
-            }
-            if (response.Code == 403)
-            {
-                _logger.LogError($"Forbiden: ${string.Join(",", phoneNumbers)}");
-                return (null, true);
-            }
+                var message = BuildTemplateMessage(templateName, parameters);
 
-            if (response.Code != 200)
-                throw new Exception($"Error In Send Sms : {response.Code} - {response.Status}");
+                var r = await SendAsync(new[] { phoneNumber }, message, null);
 
-            return (response.Data.MessageId.ToString(), false);
+                return r.Item1;
+            }
 
         }
-
-        public async Task<string> VerifyAsync(VerifySmsTemplate template, string phoneNumber, string code1,
-            string? code2 = null, string? code3 = null, bool needTag = true)
+        catch (Exception ex)
         {
-            var message = _smsConfig.GetVerifyMessage(template, code1, code2, needTag);
-            return (await SendAsync(new string[] { phoneNumber }, message, null)).Item1;
+            _logger.LogError(ex, $"Exception while sending pattern SMS: {ex.Message}");
         }
 
-        public Task<string> VerifyAudioAsync(VerifySmsTemplate template, string phoneNumber, string code1, string? code2 = null, string? code3 = null)
-        {
-            throw new NotImplementedException();
-        }
-
-
+        return string.Empty;
+    }
+    public Task<string> VerifyAudioAsync(VerifySmsTemplate template, string phoneNumber, string code1, string? code2 = null, string? code3 = null)
+    {
+        throw new NotImplementedException();
     }
 }

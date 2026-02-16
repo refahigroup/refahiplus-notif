@@ -14,8 +14,23 @@ namespace Refahi.Notif.Infrastructure.Persistence.Postgres
     {
         public static void UsePostreSqlAndHangfire(this IServiceCollection services, IConfiguration configuration)
         {
-            string connectionString = configuration.GetConnectionString("PostgresNotif");
-            string hanfireConnectionString = configuration.GetConnectionString("PostgresNotifHangfire");
+            string connectionString = configuration.GetConnectionString("PostgresNotif")
+                ?? throw new InvalidOperationException("Connection string 'PostgresNotif' not found.");
+
+            string hanfireConnectionString = configuration.GetConnectionString("PostgresNotifHangfire")
+                ?? throw new InvalidOperationException("Connection string 'PostgresNotifHangfire' not found.");
+
+
+
+            connectionString = connectionString
+                .Replace("{DB_USER}", Environment.GetEnvironmentVariable("DB_USER") ?? "")
+                .Replace("{DB_PASSWORD}", Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "");
+
+            hanfireConnectionString = hanfireConnectionString
+                .Replace("{DB_USER}", Environment.GetEnvironmentVariable("DB_USER") ?? "")
+                .Replace("{DB_PASSWORD}", Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "");
+
+
 
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
@@ -31,7 +46,7 @@ namespace Refahi.Notif.Infrastructure.Persistence.Postgres
                 .UseRecommendedSerializerSettings()
 
                 .UsePostgreSqlStorage(c =>
-                    c.UseNpgsqlConnection(configuration.GetConnectionString("PostgresNotifHangfire")), new PostgreSqlStorageOptions
+                    c.UseNpgsqlConnection(hanfireConnectionString), new PostgreSqlStorageOptions
                     {
                         PrepareSchemaIfNecessary = true
                     })

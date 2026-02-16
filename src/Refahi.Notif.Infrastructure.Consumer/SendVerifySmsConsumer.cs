@@ -9,8 +9,7 @@ using Refahi.Notif.Messages.NotifCenter;
 
 namespace Refahi.Notif.Infrastructure.Consumer
 {
-    public class SendVerifySmsConsumer :
-        IConsumer<SendVerifySms>
+    public class SendVerifySmsConsumer : IConsumer<SendVerifySms>
     {
         readonly ILogger<SendVerifySmsConsumer> _logger;
         readonly IMediator _mediator;

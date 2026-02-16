@@ -29,15 +29,17 @@ namespace Refahi.Notif.Application.Service
             #region Config
 
             services.AddConfiguration<SmsTemplate>(configuration, "SmsTemplate");
+
             services.AddConfiguration<NikSmsConfiguration>(configuration, "NikSmsConfiguration");
 
             services.AddConfiguration<KaveSmsConfiguration>(configuration, "KaveSmsConfiguration");
 
-            services.AddConfiguration<MedianaSmsConfiguration>(configuration, "MedianaSmsConfiguration");
+            services.AddConfiguration<MedianaSmsConfiguration>(configuration, MedianaSmsConfiguration.SectionName);
+
             services.AddConfiguration<ShatelSmsConfiguration>(configuration, "ShatelSmsConfiguration");
 
-
             services.Configure<MedianaHubSmsConfiguration>(configuration.GetSection("MedianaSmsHubConfiguration"));
+
             services.Configure<MessageSenderProviderConfig>(configuration.GetSection("MessageSenderProviderConfig"));
 
             var array = new List<string>();

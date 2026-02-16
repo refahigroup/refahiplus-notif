@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using Prometheus;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Refahi.Notif.Infrastructure.RedisCache;
+using Refahi.Notif.Infrastructure.MemoryCache;
 using Refahi.Notif.Application.Contract;
 using Refahi.Notif.Application.Contract.Services;
 using Refahi.Notif.Application.Contract.Dtos.Message.Commands;
@@ -70,8 +71,15 @@ namespace Refahi.Notif.EndPoint.Api.Startup
 
 
             //internal services
-            //services.AddInMemoryCache(configuration);
-            services.AddRedis(configuration);
+            // Use in-memory cache for Development, Redis for Production
+            if (env.IsDevelopment())
+            {
+                services.AddInMemoryCache(configuration);
+            }
+            else
+            {
+                services.AddRedis(configuration);
+            }
 
             services.AddConsumer(configuration);
             services.AddSmsMessaging();
@@ -88,11 +96,11 @@ namespace Refahi.Notif.EndPoint.Api.Startup
             //services.AddCommandApplication();
             services.AddHealthCheck(configuration).ForwardToPrometheus();
 
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                // .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: false, reloadOnChange: true)
-                .AddEnvironmentVariables();
+            //var builder = new ConfigurationBuilder()
+            //    .SetBasePath(env.ContentRootPath)
+            //    // .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            //    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: false, reloadOnChange: true)
+            //    .AddEnvironmentVariables();
         }
 
     }

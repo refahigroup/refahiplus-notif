@@ -1,4 +1,4 @@
-﻿namespace Refahi.Notif.Infrastructure.Messaging.Sms.Mediana.Responses
+﻿namespace Refahi.Notif.Infrastructure.Messaging.Sms.Mediana
 {
     public class MedianaReponse<T>
     {

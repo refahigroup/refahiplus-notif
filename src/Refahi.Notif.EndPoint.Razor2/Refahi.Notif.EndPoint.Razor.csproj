@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>84a1dab1-05b4-4c13-9265-8f3c329ba604</UserSecretsId>
@@ -10,8 +10,8 @@
 		<None Include="..\..\Dockerfile.Razor" Link="Dockerfile" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="MassTransit" Version="8.2.2" />
-	  <PackageReference Include="MassTransit.RabbitMQ" Version="8.2.2" />
+	  <PackageReference Include="MassTransit" Version="9.0.1" />
+	  <PackageReference Include="MassTransit.RabbitMQ" Version="9.0.1" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\Refahi.Notif.Application.Service\Refahi.Notif.Application.Service.csproj" />

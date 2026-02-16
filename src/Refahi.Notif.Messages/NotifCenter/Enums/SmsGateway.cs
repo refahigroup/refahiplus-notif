@@ -12,8 +12,10 @@ namespace Refahi.Notif.Messages.NotifCenter.Enums
 
         [Display(Name = "مدیانا")]
         Mediana = 3,
+
         [Display(Name = "مدیانا-هاب")]
         MedianaHub = 4,
+
         [Display(Name = "شاتل")]
         Shatel = 5
     }

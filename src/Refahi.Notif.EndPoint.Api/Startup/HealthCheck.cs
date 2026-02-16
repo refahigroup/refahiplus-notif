@@ -1,6 +1,7 @@
 ﻿using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using RabbitMQ.Client;
 using Refahi.Notif.Infrastructure.Messaging.Sms.KaveNegar;
 
 namespace Refahi.Notif.EndPoint.Api.Startup
@@ -9,16 +10,17 @@ namespace Refahi.Notif.EndPoint.Api.Startup
     {
         private static string KaveNegarCheckName = "KaveNegar";
         private static string NikSmsCheckName = "NikSms";
-        public static IHealthChecksBuilder AddHealthCheck(this IServiceCollection services, ConfigurationManager c)
+        public static IHealthChecksBuilder AddHealthCheck(this IServiceCollection services, ConfigurationManager config)
         {
 
-            var rabbitUrl = c["BrokerInfo:Host"];
+            var rabbitUrl = config["BrokerInfo:Host"];
+
             if (!rabbitUrl.Contains(':'))
                 rabbitUrl += ":5672";
 
             return services.AddHealthChecks()
 
-             .AddSqlServer(c["ConnectionStrings:Notif"])
+             .AddSqlServer(config["ConnectionStrings:Notif"])
 
              .AddAsyncCheck(KaveNegarCheckName, x => services.BuildServiceProvider().GetService<KaveSmsCreditChecker>().Check())
 
@@ -29,7 +31,18 @@ namespace Refahi.Notif.EndPoint.Api.Startup
                  x.MinimumAvailableServers = 1;
                  //x.MaximumJobsFailed = 1;
              })
-             .AddRabbitMQ(rabbitConnectionString: $"amqp://{c["BrokerInfo:Username"]}:{c["BrokerInfo:Password"]}@{rabbitUrl}/")
+             .AddRabbitMQ(sp =>
+             {
+                 var hostParts = rabbitUrl.Split(':');
+                 var factory = new ConnectionFactory()
+                 {
+                     HostName = hostParts[0],
+                     Port = hostParts.Length > 1 ? int.Parse(hostParts[1]) : 5672,
+                     UserName = config["BrokerInfo:Username"],
+                     Password = config["BrokerInfo:Password"]
+                 };
+                 return factory.CreateConnectionAsync().GetAwaiter().GetResult();
+             })
              ;
 
         }
