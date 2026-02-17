@@ -13,7 +13,7 @@ variables:
   SOLUTION: "Refahi.Notif.sln"
   API_CSPROJ: "src/Refahi.Notif.EndPoint.Api/Refahi.Notif.EndPoint.Api.csproj"
   SERVICE_NAME: "notif"
-
+  NUGET_CONFIG: "NuGet.config"
   PUBLISH_DIR: "publish"
 
 default:
@@ -43,7 +43,8 @@ build_publish:
       BUILD_VERSION="${ENV}-${CI_PIPELINE_IID}-${CI_COMMIT_SHORT_SHA}"
       echo "BUILD_VERSION=$BUILD_VERSION" >> build.env
 
-    - dotnet restore "./$SOLUTION" --packages .nuget/packages
+    - echo "Using NuGet config: $NUGET_CONFIG"
+    - dotnet restore "./$SOLUTION" --configfile "$NUGET_CONFIG" --packages .nuget/packages
     - dotnet build "./$SOLUTION" -c Release --no-restore
 
     - dotnet publish "./$API_CSPROJ" -c Release --no-build --output "./$PUBLISH_DIR"
