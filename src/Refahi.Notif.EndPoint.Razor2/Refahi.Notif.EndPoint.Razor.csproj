@@ -10,8 +10,8 @@
 		<None Include="..\..\Dockerfile.Razor" Link="Dockerfile" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="MassTransit" Version="9.0.1" />
-	  <PackageReference Include="MassTransit.RabbitMQ" Version="9.0.1" />
+	  <PackageReference Include="MassTransit" Version="8.5.2" />
+	  <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.2" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\Refahi.Notif.Application.Service\Refahi.Notif.Application.Service.csproj" />
