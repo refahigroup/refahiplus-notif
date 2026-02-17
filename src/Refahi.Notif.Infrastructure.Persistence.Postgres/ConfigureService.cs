@@ -21,7 +21,6 @@ namespace Refahi.Notif.Infrastructure.Persistence.Postgres
                 ?? throw new InvalidOperationException("Connection string 'PostgresNotifHangfire' not found.");
 
 
-
             connectionString = connectionString
                 .Replace("{DB_USER}", Environment.GetEnvironmentVariable("DB_USER") ?? "")
                 .Replace("{DB_PASSWORD}", Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "");
@@ -29,7 +28,6 @@ namespace Refahi.Notif.Infrastructure.Persistence.Postgres
             hanfireConnectionString = hanfireConnectionString
                 .Replace("{DB_USER}", Environment.GetEnvironmentVariable("DB_USER") ?? "")
                 .Replace("{DB_PASSWORD}", Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "");
-
 
 
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
