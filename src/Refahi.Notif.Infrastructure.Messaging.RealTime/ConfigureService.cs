@@ -14,6 +14,9 @@ namespace Refahi.Notif.Infrastructure.Messaging.RealTime
             services.AddScoped<IRealTimeSender, RealTimeSender>();
             services.AddSingleton<RealTimeHub>();
 
+            // Configure MassTransit License
+            var config = serviceProvider.GetRequiredService<IConfiguration>();
+
             services.AddMassTransit(x =>
             {
                 x.AddConsumer<SendRealTimeMessageToAddressConsumer>();

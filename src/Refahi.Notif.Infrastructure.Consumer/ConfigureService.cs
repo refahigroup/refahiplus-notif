@@ -17,8 +17,6 @@ namespace Refahi.Notif.Infrastructure.Consumer
 
         public static void AddConsumer(this IServiceCollection services, IConfiguration config)
         {
-
-
             services.AddMassTransit(x =>
             {
 
@@ -83,6 +81,7 @@ namespace Refahi.Notif.Infrastructure.Consumer
 
             services.AddHostedService<MassTransitConsoleHostedService>();
         }
+
         private static void AddConsumerWithDefinition<TConsumer>(this IBusRegistrationConfigurator x, Action<IConsumerConfigurator<TConsumer>> configure = null) where TConsumer : class, IConsumer
         {
             x.AddConsumer<TConsumer, CustomConsumerDefinition<TConsumer>>(configure);

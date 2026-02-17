@@ -79,12 +79,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="appsettings.Production.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-    <Content Update="appsettings.Production.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
     <Content Update="appsettings.Staging.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
