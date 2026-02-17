@@ -42,8 +42,8 @@ namespace Refahi.Notif.EndPoint.Api.Startup
             app.UseApplication();
             app.UseSmsMessaging();
             app.UseEmailMessaging();
-            app.UseTelegramMessaging();
-            app.UsePushNotificationMessaging();
+            //app.UseTelegramMessaging();
+            //app.UsePushNotificationMessaging();
             //app.UseHttpsRedirection();
 
             //app.UseSqlServerHangfire(provider);
