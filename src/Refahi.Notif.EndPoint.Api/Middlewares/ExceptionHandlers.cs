@@ -1,4 +1,5 @@
 ﻿using Refahi.Notif.Domain.Core.Exceptions;
+using System.Text.Json;
 
 namespace Refahi.Notif.EndPoint.Api.Middlewares
 {
@@ -33,20 +34,43 @@ namespace Refahi.Notif.EndPoint.Api.Middlewares
             _logger.LogError($"{ex.Message} , Request :{requestBody}");
 
             var code = 500;
-            string message = Errors.UnHandledException;
+            object response;
             context.Response.ContentType = "application/json";
 
             switch (ex)
             {
-                case BussinessException:
+                case JsonException jsonEx:
                     code = 400;
-                    message = ex.Message;
+                    response = new
+                    {
+                        statusCode = 400,
+                        message = "Invalid JSON format",
+                        errors = new[] { "The request body contains invalid JSON. Please check your syntax." }
+                    };
                     break;
 
+                case BussinessException businessEx:
+                    code = 400;
+                    response = new
+                    {
+                        statusCode = 400,
+                        message = "Business validation failed",
+                        errors = businessEx.Message.Split(',')
+                    };
+                    break;
+
+                default:
+                    response = new
+                    {
+                        statusCode = 500,
+                        message = Errors.UnHandledException,
+                        errors = new[] { "An unexpected error occurred. Please try again later." }
+                    };
+                    break;
             }
 
             context.Response.StatusCode = code;
-            await context.Response.WriteAsJsonAsync(message.Split(','));
+            await context.Response.WriteAsJsonAsync(response);
         }
         private async Task<string> GenerateRequestInformation(HttpContext httpContext)
         {

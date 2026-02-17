@@ -41,7 +41,26 @@ namespace Refahi.Notif.EndPoint.Api.Startup
 
             services.Configure<ApiBehaviorOptions>(options =>
             {
-                options.SuppressModelStateInvalidFilter = true;
+                options.SuppressModelStateInvalidFilter = false; // Enable automatic validation
+                
+                // Custom response for model validation errors
+                options.InvalidModelStateResponseFactory = context =>
+                {
+                    var errors = context.ModelState
+                        .Where(e => e.Value?.Errors.Count > 0)
+                        .SelectMany(e => e.Value!.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToArray();
+
+                    var response = new
+                    {
+                        statusCode = 400,
+                        message = "Validation failed",
+                        errors = errors
+                    };
+
+                    return new BadRequestObjectResult(response);
+                };
             });
             services.AddCors();
 

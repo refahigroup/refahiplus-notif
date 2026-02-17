@@ -3,6 +3,7 @@ using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Refahi.Notif.Application.Contract.Configuration;
 using Refahi.Notif.Application.Contract.Dtos.Inbox;
 using Refahi.Notif.Application.Service.Inbox.Common;
 using Refahi.Notif.Application.Service.Message.Common;
@@ -27,6 +28,8 @@ namespace Refahi.Notif.Application.Service
 
 
             #region Config
+
+            services.Configure<OtpConfiguration>(configuration.GetSection("OtpConfiguration"));
 
             services.AddConfiguration<SmsTemplate>(configuration, "SmsTemplate");
 
