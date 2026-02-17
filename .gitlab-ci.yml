@@ -27,7 +27,6 @@ build_publish:
   image: registry.refahi.xyz/refahi-devops/ci-cache/dotnet-sdk:10.0
   script:
     - echo "Branch=$CI_COMMIT_BRANCH"
-
     - |
       if [ "$CI_COMMIT_BRANCH" = "main" ]; then
         ENV="prod"
@@ -38,15 +37,12 @@ build_publish:
       fi
       echo "ENV=$ENV" > build.env
       echo "SERVICE_NAME=$SERVICE_NAME" >> build.env
-
     - |
       BUILD_VERSION="${ENV}-${CI_PIPELINE_IID}-${CI_COMMIT_SHORT_SHA}"
       echo "BUILD_VERSION=$BUILD_VERSION" >> build.env
-
-    - echo "Using NuGet config: $NUGET_CONFIG"
+    - echo "Using NuGet config from $NUGET_CONFIG"
     - dotnet restore "./$SOLUTION" --configfile "$NUGET_CONFIG" --packages .nuget/packages
     - dotnet build "./$SOLUTION" -c Release --no-restore
-
     - dotnet publish "./$API_CSPROJ" -c Release --no-build --output "./$PUBLISH_DIR"
 
   artifacts:
