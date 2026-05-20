@@ -20,11 +20,11 @@ namespace Refahi.Notif.EndPoint.Api.Startup
 
             return services.AddHealthChecks()
 
-             .AddSqlServer(config["ConnectionStrings:Notif"])
+             .AddNpgSql(config["ConnectionStrings:PostgresNotif"])
 
-             .AddAsyncCheck(KaveNegarCheckName, x => services.BuildServiceProvider().GetService<KaveSmsCreditChecker>().Check())
+             .AddCheck<KaveSmsCreditChecker>(KaveNegarCheckName)
 
-             //.AddAsyncCheck(NikSmsCheckName, x => services.BuildServiceProvider().GetService<NikSmsUptimeChecker>().Check())
+             //.AddCheck<NikSmsUptimeChecker>(NikSmsCheckName)
 
              .AddHangfire(x =>
              {

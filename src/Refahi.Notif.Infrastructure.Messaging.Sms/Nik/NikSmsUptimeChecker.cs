@@ -12,15 +12,17 @@ namespace Refahi.Notif.Infrastructure.Messaging.Sms.Nik
         private readonly HttpClient _httpClient;
         private readonly NikSmsConfiguration _config;
         private readonly PublicApiV1 _nikService;
+        private readonly IBackgroundJobClient _backgroundJobClient;
 
         public static bool NikSmsIsUp { get; private set; } = true;
         public static string JobName { get; set; }
 
-        public NikSmsUptimeChecker(HttpClient httpClient, NikSmsConfiguration config)
+        public NikSmsUptimeChecker(HttpClient httpClient, NikSmsConfiguration config, JobStorage jobStorage)
         {
             _httpClient = httpClient;
             _config = config;
             _nikService = new PublicApiV1(_config.UserName, _config.Password, "fa");
+            _backgroundJobClient = new BackgroundJobClient(jobStorage);
         }
 
         public async Task<HealthCheckResult> Check()
@@ -53,9 +55,9 @@ namespace Refahi.Notif.Infrastructure.Messaging.Sms.Nik
         public void Start(int interval = SuccessInterval)
         {
             if (JobName != null)
-                BackgroundJob.Delete(JobName);
+                _backgroundJobClient.Delete(JobName);
 
-            JobName = BackgroundJob.Schedule(
+            JobName = _backgroundJobClient.Schedule(
                     () => Check(),
                     TimeSpan.FromMinutes(interval));
         }

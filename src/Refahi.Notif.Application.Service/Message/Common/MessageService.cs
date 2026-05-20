@@ -16,11 +16,13 @@ namespace Refahi.Notif.Application.Service.Message.Common
         private readonly ILogger<MessageService> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IBus _bus;
-        public MessageService(ILogger<MessageService> logger, IUnitOfWork unitOfWork, IBus bus)
+        private readonly IBackgroundJobClient _backgroundJobClient;
+        public MessageService(ILogger<MessageService> logger, IUnitOfWork unitOfWork, IBus bus, IBackgroundJobClient backgroundJobClient)
         {
             _bus = bus;
             _logger = logger;
             _unitOfWork = unitOfWork;
+            _backgroundJobClient = backgroundJobClient;
         }
         public async Task AddJobAndSetToDomain(Domain.Core.Aggregates.MessageAgg.Message domain)
         {
@@ -66,7 +68,7 @@ namespace Refahi.Notif.Application.Service.Message.Common
         {
             var delay = domain.DueTime.Value - DateTime.Now;
 
-            return BackgroundJob.Schedule(() =>
+            return _backgroundJobClient.Schedule(() =>
                     JobAction(
                         domain.Id,
                         domain.Sms != null,
@@ -103,19 +105,19 @@ namespace Refahi.Notif.Application.Service.Message.Common
             {
                 string? jobId = null;
                 if (domain.PushNotification is { DueTime: not null })
-                    jobId = BackgroundJob.Schedule(() => PushJobAction(domain.Id),
+                    jobId = _backgroundJobClient.Schedule(() => PushJobAction(domain.Id),
                         domain.PushNotification.DueTime.Value - DateTime.Now);
                 if (domain.Notification is { DueTime: not null })
-                    jobId = BackgroundJob.Schedule(() => NotificationJobAction(domain.Id),
+                    jobId = _backgroundJobClient.Schedule(() => NotificationJobAction(domain.Id),
                         domain.Notification.DueTime.Value - DateTime.Now);
                 if (domain.Sms is { DueTime: not null })
-                    jobId = BackgroundJob.Schedule(() => SmsJobAction(domain.Id),
+                    jobId = _backgroundJobClient.Schedule(() => SmsJobAction(domain.Id),
                         domain.Sms.DueTime.Value - DateTime.Now);
                 if (domain.Email is { DueTime: not null })
-                    jobId = BackgroundJob.Schedule(() => EmailJobAction(domain.Id),
+                    jobId = _backgroundJobClient.Schedule(() => EmailJobAction(domain.Id),
                         domain.Email.DueTime.Value - DateTime.Now);
                 if (domain.Telegram is { DueTime: not null })
-                    jobId = BackgroundJob.Schedule(() => TelegramJobAction(domain.Id),
+                    jobId = _backgroundJobClient.Schedule(() => TelegramJobAction(domain.Id),
                         domain.Telegram.DueTime.Value - DateTime.Now);
                 domain.Enqueued(jobId);
                 _unitOfWork.MessageRepository.Update(domain);

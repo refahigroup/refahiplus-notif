@@ -3,7 +3,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Refahi.Notif.Infrastructure.Messaging.Sms.KaveNegar
 {
-    public class KaveSmsCreditChecker
+    public class KaveSmsCreditChecker : IHealthCheck
     {
         private readonly HttpClient _httpClient;
         private readonly KaveSmsConfiguration _config;
@@ -14,7 +14,7 @@ namespace Refahi.Notif.Infrastructure.Messaging.Sms.KaveNegar
             _config = config;
         }
 
-        public async Task<HealthCheckResult> Check()
+        public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
         {
             //var url = $"http://api.kavenegar.com/v1/{_config.Token}/account/info.json";
 
@@ -30,5 +30,8 @@ namespace Refahi.Notif.Infrastructure.Messaging.Sms.KaveNegar
             return new HealthCheckResult(HealthStatus.Healthy);
         }
 
+        // Keep backward-compat method used by NikSmsUptimeChecker pattern (if needed)
+        public Task<HealthCheckResult> Check() =>
+            CheckHealthAsync(null!, CancellationToken.None);
     }
 }

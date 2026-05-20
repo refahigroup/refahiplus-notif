@@ -9,6 +9,7 @@ namespace Refahi.Notif.Infrastructure.MemoryCache
         public static void AddInMemoryCache(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddMemoryCache();
+            services.AddDistributedMemoryCache();
             services.AddScoped<ICacheService, InMemoryCacheService>();
         }
     }

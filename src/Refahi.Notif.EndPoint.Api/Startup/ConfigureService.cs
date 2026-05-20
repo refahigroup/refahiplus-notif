@@ -1,4 +1,5 @@
-﻿using FluentValidation.AspNetCore;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
 using Hangfire;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
@@ -29,10 +30,10 @@ namespace Refahi.Notif.EndPoint.Api.Startup
         public static void ConfigureServices(this IServiceCollection services, ConfigurationManager configuration, IHostEnvironment env)
         {
             //public services
-            services.AddControllers()
-                .AddFluentValidation(fv =>
-                fv.RegisterValidatorsFromAssemblyContaining<SendMessageRequest>()
-                );
+            services.AddControllers();
+
+            services.AddFluentValidationAutoValidation();
+            services.AddValidatorsFromAssemblyContaining<SendMessageRequest>();
 
             services.AddEndpointsApiExplorer();
 

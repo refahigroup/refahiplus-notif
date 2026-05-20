@@ -13,7 +13,6 @@ using Refahi.Notif.Infrastructure.Messaging.Sms.Mediana;
 using Refahi.Notif.Infrastructure.Messaging.Sms.MedianaSMSHub;
 using Refahi.Notif.Infrastructure.Messaging.Sms.Nik;
 using Refahi.Notif.Infrastructure.Messaging.Sms.Shatel;
-using StackExchange.Redis;
 
 namespace Refahi.Notif.Application.Service
 {
@@ -45,22 +44,6 @@ namespace Refahi.Notif.Application.Service
 
             services.Configure<MessageSenderProviderConfig>(configuration.GetSection("MessageSenderProviderConfig"));
 
-            var array = new List<string>();
-            //TODO read from config
-            var configurationOptions = new ConfigurationOptions();
-            foreach (var endpoint in configuration.GetSection("RedisConfig:Endpoints").Get<string[]>())
-            {
-                configurationOptions.EndPoints.Add(endpoint);
-
-            }
-            configurationOptions.Password = configuration.GetSection("RedisConfig:Password").Get<string>();
-            services.AddStackExchangeRedisCache(options =>
-            {
-                options.ConfigurationOptions = configurationOptions;
-                options.InstanceName = configuration.GetSection("RedisConfig:InstanceName").Get<string>();
-
-            });
-
             services.AddHttpClient("MedianaSmsHub",
                     config =>
                     {
@@ -88,7 +71,7 @@ namespace Refahi.Notif.Application.Service
 
         public static void UseApplication(this IApplicationBuilder app)
         {
-            app.UseHangfireDashboard();
+            // Hangfire Dashboard is configured via UsePostgreHangfire / UseSqlServerHangfire
         }
 
     }

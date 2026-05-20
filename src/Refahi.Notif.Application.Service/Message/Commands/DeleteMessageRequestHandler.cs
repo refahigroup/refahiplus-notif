@@ -10,15 +10,17 @@ namespace Refahi.Notif.Application.Service.Message.Commands
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<DeleteMessageRequestHandler> _logger;
-
+        private readonly IBackgroundJobClient _backgroundJobClient;
 
         public DeleteMessageRequestHandler(
             IUnitOfWork unitOfWork,
-            ILogger<DeleteMessageRequestHandler> logger
+            ILogger<DeleteMessageRequestHandler> logger,
+            IBackgroundJobClient backgroundJobClient
             )
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
+            _backgroundJobClient = backgroundJobClient;
         }
         public async Task Handle(DeleteMessageRequest request, CancellationToken cancellationToken)
         {
@@ -33,7 +35,7 @@ namespace Refahi.Notif.Application.Service.Message.Commands
             try
             {
 
-                BackgroundJob.Delete(message.JobId);
+                _backgroundJobClient.Delete(message.JobId);
 
             }
             catch (Exception ex)
