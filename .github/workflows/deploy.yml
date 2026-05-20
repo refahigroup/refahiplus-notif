@@ -29,7 +29,7 @@ jobs:
       run: dotnet build ./Refahi.Notif.sln --configuration Release
 
     - name: Publish Refahi.Notif
-      run: dotnet publish ./src/Refahi.Notif.EndPoint.Api/Refahi.Notif.EndPoint.Api.csproj --configuration Release --no-build
+      run: dotnet publish ./src/Refahi.Notif.EndPoint.Api/Refahi.Notif.EndPoint.Api.csproj --configuration Release --no-build --output ./publish
       
     - name: Set service name and env
       id: service
