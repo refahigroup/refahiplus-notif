@@ -21,7 +21,7 @@ namespace Refahi.Notif.Application.Service.Otp
 
         public async Task<ValidateOtpResponse> Handle(ValidateOtpRequest request, CancellationToken cancellationToken)
         {
-            var cacheKey = GetCacheKey(request.ReferenceCode);
+            var cacheKey = OtpCacheModel.GenerateKey(request.ReferenceCode);
 
             // Get OTP from cache
             var cachedOtp = await _cacheService.GetAsync<OtpCacheModel>(cacheKey);
@@ -77,6 +77,8 @@ namespace Refahi.Notif.Application.Service.Otp
                 return new ValidateOtpResponse
                 {
                     IsValid = true,
+                    Destination = cachedOtp.Destination,
+                    DestinationType = cachedOtp.Type,
                     AttemptsRemaining = 0,
                     Message = "OTP verified successfully"
                 };
@@ -98,11 +100,6 @@ namespace Refahi.Notif.Application.Service.Otp
                 AttemptsRemaining = attemptsRemaining,
                 Message = $"Invalid OTP code. {attemptsRemaining} attempts remaining"
             };
-        }
-
-        private static string GetCacheKey(string referenceCode)
-        {
-            return $"otp:{referenceCode}";
         }
     }
 }

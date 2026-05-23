@@ -10,5 +10,10 @@ namespace Refahi.Notif.Application.Contract.Models
         public int MaxAttempts { get; set; } = 3;
         public DateTime CreatedAt { get; set; }
         public DateTime ExpiresAt { get; set; }
+
+        public static string GenerateKey(string key)
+        {
+            return $"otp:{key}";
+        }
     }
 }

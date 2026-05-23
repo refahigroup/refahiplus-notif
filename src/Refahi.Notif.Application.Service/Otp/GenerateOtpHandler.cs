@@ -64,7 +64,7 @@ namespace Refahi.Notif.Application.Service.Otp
             };
 
             // Store in Redis
-            var cacheKey = GetCacheKey(referenceCode);
+            var cacheKey = OtpCacheModel.GenerateKey(referenceCode);
             await _cacheService.SetAsync(cacheKey, cacheModel, expiresAt);
 
             _logger.LogInformation("OTP generated for {Destination} with reference {ReferenceCode}", 
@@ -133,11 +133,6 @@ namespace Refahi.Notif.Application.Service.Otp
         private static string GenerateReferenceCode()
         {
             return Guid.NewGuid().ToString("N").Substring(0, 16);
-        }
-
-        private static string GetCacheKey(string referenceCode)
-        {
-            return $"otp:{referenceCode}";
         }
 
         private static string MaskDestination(string destination)
