@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Refahi.Notif.Domain.Contract.Models;
 using Refahi.Notif.Domain.Core.Aggregates.MessageAgg;
@@ -33,12 +34,12 @@ public class SqlNotifContext : DbContext, IDbContext
         modelBuilder.Entity<Message>()
            .OwnsOne(x => x.Sms)
            .Property(e => e.PhoneNumbers)
-           .HasConversion<ArrayConverter>();
+           .HasConversion<ArrayConverter, ArrayComparer>();
 
         modelBuilder.Entity<Message>()
             .OwnsOne(x => x.PushNotification)
             .Property(e => e.Jobs)
-            .HasConversion<JobArrayConverter>();
+            .HasConversion<JobArrayConverter, JobArrayComparer>();
         modelBuilder.Entity<Message>()
             .OwnsOne(x => x.Notification)
             .Property(e => e.Subject).HasMaxLength(512);
@@ -72,7 +73,7 @@ public class SqlNotifContext : DbContext, IDbContext
             .OwnsOne(x => x.Notification)
             .Property(e => e.ValidatorUrl)
             .HasMaxLength(512)
-            .HasConversion<ArrayConverter>();
+            .HasConversion<ArrayConverter, ArrayComparer>();
 
         modelBuilder.Entity<Message>()
             .OwnsOne(x => x.Notification);
@@ -81,18 +82,18 @@ public class SqlNotifContext : DbContext, IDbContext
             .OwnsOne(x => x.Sms)
             .Property(e => e.ValidatorUrl)
             .HasMaxLength(512)
-            .HasConversion<ArrayConverter>();
+            .HasConversion<ArrayConverter, ArrayComparer>();
         modelBuilder.Entity<Message>()
             .OwnsOne(x => x.PushNotification)
             .Property(e => e.ValidatorUrl)
             .HasMaxLength(512)
-            .HasConversion<ArrayConverter>();
+            .HasConversion<ArrayConverter, ArrayComparer>();
 
         modelBuilder.Entity<Message>()
             .OwnsOne(x => x.Telegram)
             .Property(e => e.ValidatorUrl)
             .HasMaxLength(512)
-            .HasConversion<ArrayConverter>(); ;
+            .HasConversion<ArrayConverter, ArrayComparer>(); ;
 
         modelBuilder.Entity<Message>()
             .Property(e => e.ValidatorUrl)
@@ -102,7 +103,7 @@ public class SqlNotifContext : DbContext, IDbContext
         modelBuilder.Entity<Message>()
             .OwnsOne(x => x.Email)
             .Property(e => e.Addresses)
-            .HasConversion<ArrayConverter>();
+            .HasConversion<ArrayConverter, ArrayComparer>();
 
         modelBuilder.Entity<NotificationEvent>()
             .Property(x => x.Id);
@@ -191,12 +192,34 @@ public class ArrayConverter : ValueConverter<string[], string>
     }
 }
 
+public class ArrayComparer : ValueComparer<string[]>
+{
+    public ArrayComparer()
+        : base(
+              (c1, c2) => c1!.SequenceEqual(c2!),
+              c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+              c => c.ToArray())
+    {
+    }
+}
+
 public class JobArrayConverter : ValueConverter<List<PushNotification.PushNotificationJob>, string>
 {
     public JobArrayConverter()
         : base(
               v => string.Join("#-#", v.Select(q => q.Serilize()).ToArray()),
               v => v.Split("#-#", StringSplitOptions.None).Select(q => q.DeSerilize<PushNotification.PushNotificationJob>()).ToList())
+    {
+    }
+}
+
+public class JobArrayComparer : ValueComparer<List<PushNotification.PushNotificationJob>>
+{
+    public JobArrayComparer()
+        : base(
+              (c1, c2) => c1!.SequenceEqual(c2!),
+              c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+              c => c.ToList())
     {
     }
 }

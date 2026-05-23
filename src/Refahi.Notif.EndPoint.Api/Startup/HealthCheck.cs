@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using RabbitMQ.Client;
 using Refahi.Notif.Infrastructure.Messaging.Sms.KaveNegar;
+using Refahi.Notif.Domain.Core.Utility;
 
 namespace Refahi.Notif.EndPoint.Api.Startup
 {
@@ -20,7 +21,7 @@ namespace Refahi.Notif.EndPoint.Api.Startup
 
             return services.AddHealthChecks()
 
-             .AddNpgSql(config["ConnectionStrings:PostgresNotif"])
+             .AddNpgSql((config["ConnectionStrings:PostgresNotif"] ?? "").ReplaceWithEnvironmentVariables())
 
              .AddCheck<KaveSmsCreditChecker>(KaveNegarCheckName)
 

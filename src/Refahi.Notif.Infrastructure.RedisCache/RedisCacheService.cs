@@ -29,10 +29,14 @@ namespace Refahi.Notif.Infrastructure.RedisCache
         public async Task SetAsync<T>(string key, T value, DateTimeOffset absoluteExpiration)
         {
             var json = JsonConvert.SerializeObject(value);
-            _cache.SetString(key, json, new DistributedCacheEntryOptions()
+            await _cache.SetStringAsync(key, json, new DistributedCacheEntryOptions()
             {
                 AbsoluteExpiration = absoluteExpiration
             });
+        }
+        public async Task DeleteAsync(string key)
+        {
+            await _cache.RemoveAsync(key);
         }
     }
 }

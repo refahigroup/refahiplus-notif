@@ -19,17 +19,24 @@ namespace Refahi.Notif.Application.Service.Message.Commands
             var smsSender = _smsSenderFactory.GetServiceForVerify(request.IsAudio, request.IsResend);
 
 
-
             if (!request.IsAudio)
             {
-                if (!request.IsResend)
-                    return (await smsSender.SendAsync(new[] { request.PhoneNumber },
-                        _smsConfiguration.GetVerifyMessage(request.Template, request.Code,
-                            request.ServiceUrl ?? "refahiplus.com", request.NeedTag ?? true),
-                        null)).Item1;
+                //if (!request.IsResend)
+                //    return (await smsSender.SendAsync(new[] { request.PhoneNumber },
+                //        _smsConfiguration.GetVerifyMessage(request.Template, request.Code,
+                //            request.ServiceUrl ?? "refahiplus.com", request.NeedTag ?? true),
+                //        null)).Item1;
+
+
+                //if (!request.IsResend)
+                //    return (await smsSender.VerifyAsync(new[] { request.PhoneNumber },
+                //        _smsConfiguration.GetVerifyMessage(request.Template, request.Code,
+                //            request.ServiceUrl ?? "refahiplus.com", request.NeedTag ?? true),
+                //        null)).Item1;
 
                 return await smsSender.VerifyAsync(request.Template, request.PhoneNumber, request.Code, request.ServiceUrl, null, request.NeedTag ?? true);
             }
+
             return await smsSender.VerifyAudioAsync(request.Template, request.PhoneNumber, request.Code);
         }
     }

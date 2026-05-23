@@ -20,4 +20,6 @@ public class MedianaSmsConfiguration
     public string MessageType { get; set; } = "Informational";
 
     public bool IsDefaultGateway { get; set; } = false;
+    public string OtpPatternCode { get; set; } = "";
+    public string AlternativeOtpTemplateName { get; set; } = "";
 }

@@ -18,6 +18,24 @@ internal class MedianaSendSmsRequest
     public string MessageText { get; set; } = string.Empty;
 }
 
+
+/// <summary>
+/// Request model for sending OTP SMS (API v1)
+/// Endpoint: POST /sms/v1/send/otp
+/// </summary>
+internal class MedianaSendOtpRequest
+{
+    [JsonPropertyName("patternCode")]
+    public string PatternCode { get; set; } = string.Empty;
+
+    [JsonPropertyName("recipient")]
+    public string Recipient { get; set; } = string.Empty;
+
+    [JsonPropertyName("otpCode")]
+    public string OtpCode { get; set; } = string.Empty;
+}
+
+
 /// <summary>
 /// Request model for sending Pattern SMS (API v1)
 /// Endpoint: POST /sms/v1/send/pattern
@@ -75,6 +93,36 @@ internal class MedianaResponseData
     [JsonPropertyName("status")]
     public string? Status { get; set; }
 
+    [JsonPropertyName("statusInt")]
+    public int StatusInt { get; set; } = 0;
+
     [JsonPropertyName("totalPrice")]
     public int? TotalPrice { get; set; }
+}
+
+internal class MedianaOtpResponse
+{
+    [JsonPropertyName("meta")]
+    public MedianaResponseMeta? Meta { get; set; }
+
+    [JsonPropertyName("data")]
+    public MedianaSendOtpReponse? Data { get; set; }
+}
+
+internal class MedianaSendOtpReponse: MedianaResponseData
+{
+    [JsonPropertyName("smsItems")]
+    public List<SmsReponseData> SmsItems = new List<SmsReponseData>();
+}
+
+internal class SmsReponseData
+{
+    [JsonPropertyName("smsItemId")]
+    public string SmsItemId { get; set; } = string.Empty;
+
+    [JsonPropertyName("recipient")]
+    public string Recipient { get; set; } = string.Empty;
+
+    [JsonPropertyName("isInBlackList")]
+    public bool IsInBlackList { get; set; } = false;
 }

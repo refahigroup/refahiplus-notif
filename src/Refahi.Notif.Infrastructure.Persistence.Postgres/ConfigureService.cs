@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Npgsql;
 using Refahi.Notif.Infrastructure.Persistence.Contract;
 using Refahi.Notif.Infrastructure.Persistence.Postgres.Context;
+using Refahi.Notif.Domain.Core.Utility;
 
 namespace Refahi.Notif.Infrastructure.Persistence.Postgres
 {
@@ -21,14 +23,17 @@ namespace Refahi.Notif.Infrastructure.Persistence.Postgres
                 ?? throw new InvalidOperationException("Connection string 'PostgresNotifHangfire' not found.");
 
 
-            connectionString = connectionString
-                .Replace("{DB_USER}", Environment.GetEnvironmentVariable("DB_USER") ?? "")
-                .Replace("{DB_PASSWORD}", Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "");
+            connectionString = connectionString.ReplaceWithEnvironmentVariables();
+            hanfireConnectionString = hanfireConnectionString.ReplaceWithEnvironmentVariables();
 
-            hanfireConnectionString = hanfireConnectionString
-                .Replace("{DB_USER}", Environment.GetEnvironmentVariable("DB_USER") ?? "")
-                .Replace("{DB_PASSWORD}", Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "");
+            using (var loggerFactory = LoggerFactory.Create(b => b.AddConsole()))
+            {
+                var logger = loggerFactory.CreateLogger("Postgres.ConfigureService");
 
+                logger.LogInformation(connectionString); 
+                logger.LogInformation(hanfireConnectionString); 
+
+            }
 
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
@@ -66,17 +71,24 @@ namespace Refahi.Notif.Infrastructure.Persistence.Postgres
 
         public static void MigratePostgreDb(this WebApplication app, IServiceProvider provider)
         {
+            using var scope = provider.CreateScope();
+            var idbContext = scope.ServiceProvider.GetRequiredService<IDbContext>();
+            var dbContext = idbContext as PgNotifContext;
+
+            if (dbContext is null) return;
+
             try
             {
-                var idbContext = provider.GetRequiredService<IDbContext>();
-                var dbContext = idbContext as PgNotifContext;
-
-                dbContext?.Database.EnsureCreated();
-                dbContext?.Database.Migrate();
+                var pending = dbContext.Database.GetPendingMigrations().ToList();
+                if (pending.Count > 0)
+                    dbContext.Database.Migrate();
             }
-            catch(Exception ex)
+            catch (Npgsql.PostgresException ex) when (ex.SqlState == "42P07")
             {
-
+                using var loggerFactory = LoggerFactory.Create(b => b.AddConsole());
+                var logger = loggerFactory.CreateLogger("Postgres.ConfigureService");
+                logger.LogWarning("Migration skipped: one or more relations already exist ({Message}). " +
+                    "Consider aligning the migration history with the existing schema.", ex.Message);
             }
         }
 

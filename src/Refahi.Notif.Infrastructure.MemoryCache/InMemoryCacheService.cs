@@ -22,5 +22,10 @@ namespace Refahi.Notif.Infrastructure.MemoryCache
         {
             _memoryCache.Set(key, value, absoluteExpiration);
         }
+        public Task DeleteAsync(string key)
+        {
+            _memoryCache.Remove(key);
+            return Task.CompletedTask;
+        }
     }
 }

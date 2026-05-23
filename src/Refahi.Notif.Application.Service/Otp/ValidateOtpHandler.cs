@@ -70,9 +70,7 @@ namespace Refahi.Notif.Application.Service.Otp
             if (cachedOtp.Code == request.Code)
             {
                 // Valid - remove from cache
-                // Note: Redis doesn't have a direct delete in ICacheService, 
-                // but we can set it with expired time
-                await _cacheService.SetAsync(cacheKey, cachedOtp, DateTimeOffset.UtcNow.AddSeconds(-1));
+                await _cacheService.DeleteAsync(cacheKey);
 
                 _logger.LogInformation("OTP validated successfully for {ReferenceCode}", request.ReferenceCode);
 

@@ -125,5 +125,22 @@ namespace Refahi.Notif.Domain.Core.Utility
         {
             return $"98{phoneNumber.NormalizePhoneNumber()}";
         }
+
+
+        public static string ReplaceWithEnvironmentVariables(this string input)
+        {
+            Regex _pattern = new(@"\{(?<key>[A-Za-z0-9_]+)\}", RegexOptions.Compiled);
+
+            if (string.IsNullOrWhiteSpace(input))
+                return input;
+
+            return _pattern.Replace(input, match =>
+            {
+                var key = match.Groups["key"].Value;
+                var value = Environment.GetEnvironmentVariable(key);
+
+                return value ?? match.Value;
+            });
+        }
     }
 }

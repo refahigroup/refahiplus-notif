@@ -16,7 +16,7 @@ public class MedianaSmsSender : ISmsSender
     private readonly ILogger<MedianaSmsSender> _logger;
 
     private const string SendSmsEndpoint = "/sms/v1/send/sms";
-    private const string SendPatternEndpoint = "/sms/v1/send/pattern";
+    private const string SendPatternEndpoint = "/sms/v1/send/otp";
 
     public SmsGateway Gateway => SmsGateway.Mediana;
 
@@ -169,33 +169,26 @@ public class MedianaSmsSender : ISmsSender
     }
     public async Task<string> VerifyAsync(VerifySmsTemplate template, string phoneNumber, string code1, string? code2 = null, string? code3 = null, bool needTag = true)
     {
-        string templateName = "VerificationCode";
-
         try
         {
-
-            Dictionary<string, string> parameters = new Dictionary<string, string>();
-            parameters.Add("code", code1);
-
-            var data = new MedianaSendPatternRequest
+            var data = new MedianaSendOtpRequest
             {
-                Type = _config.MessageType,
-                Recipients = new[] { NormalizePhoneNumber(phoneNumber) },
-                PatternCode = templateName,
-                Parameters = parameters
+                PatternCode = _config.OtpPatternCode,
+                Recipient = NormalizePhoneNumber(phoneNumber),
+                OtpCode = code1
             };
 
             var url = new Uri(new Uri(_config.BaseUrl), SendPatternEndpoint);
 
             var result = await _client.PostString(url.ToString(), data, GetHttpHeaders());
 
-            MedianaReponse<MedianaSmsResponse> response;
+            MedianaOtpResponse response;
 
             try
             {
-                response = result.DeSerilize<MedianaReponse<MedianaSmsResponse>>();
+                response = result.DeSerilize<MedianaOtpResponse>();
 
-                if (response == null || response.Data == null || response.Data.Data == null || !response.Data.Data.Succeed)
+                if (response == null || response.Data == null || !response.Data.Succeed)
                     throw new Exception("Response Not Valid");
 
                 return string.Empty;
@@ -205,7 +198,10 @@ public class MedianaSmsSender : ISmsSender
             {
                 _logger.LogError(ex, "Exception while sending pattern SMS, falling back to simple SMS");
 
-                var message = BuildTemplateMessage(templateName, parameters);
+                Dictionary<string, string> parameters = new Dictionary<string, string>();
+                parameters.Add("code", code1);
+
+                var message = BuildTemplateMessage(_config.AlternativeOtpTemplateName, parameters);
 
                 var r = await SendAsync(new[] { phoneNumber }, message, null);
 

@@ -10,5 +10,6 @@ namespace Refahi.Notif.Domain.Contract
     {
         Task<T?> GetAsync<T>(string key);
         Task SetAsync<T>(string key, T value, DateTimeOffset absoluteExpiration);
+        Task DeleteAsync(string key);
     }
 }
