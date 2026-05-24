@@ -1,6 +1,7 @@
 ﻿using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Refahi.Notif.Domain.Core.Utility;
 using Refahi.Notif.Infrastructure.Consumer.InternalConsumers;
 using Refahi.Notif.Infrastructure.Consumer.MassTransit;
 
@@ -59,18 +60,22 @@ namespace Refahi.Notif.Infrastructure.Consumer
                 x.UsingRabbitMq((context, cfg) =>
                 {
 
-                    //cfg.UseMessageRetry(r =>
-                    //   r.Exponential(
-                    //       3,
-                    //       TimeSpan.FromSeconds(1),
-                    //       TimeSpan.FromSeconds(30),
-                    //       TimeSpan.FromSeconds(5)));
+                    var brokerUsername = config["BrokerInfo:Username"];
+                    var brokerPassword = config["BrokerInfo:Password"];
+
+                    brokerUsername = !string.IsNullOrEmpty(brokerUsername)
+                       ? brokerUsername?.ReplaceWithEnvironmentVariables()
+                       : string.Empty;
+
+                    brokerPassword = !string.IsNullOrEmpty(brokerPassword)
+                       ? brokerPassword?.ReplaceWithEnvironmentVariables()
+                       : string.Empty;
 
 
                     cfg.Host(config["BrokerInfo:Host"], "/", h =>
                     {
-                        h.Username(config["BrokerInfo:Username"]);
-                        h.Password(config["BrokerInfo:Password"]);
+                        h.Username(brokerUsername!);
+                        h.Password(brokerPassword!);
                     });
 
                     cfg.ConfigureEndpoints(context);

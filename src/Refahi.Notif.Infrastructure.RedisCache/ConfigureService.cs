@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Refahi.Notif.Domain.Contract;
+using Refahi.Notif.Domain.Core.Utility;
 using StackExchange.Redis;
 
 namespace Refahi.Notif.Infrastructure.RedisCache
@@ -14,6 +15,10 @@ namespace Refahi.Notif.Infrastructure.RedisCache
             var addresses = configuration.GetSection("RedisConfig:Endpoints").Get<string[]>();
             var password = configuration.GetSection("RedisConfig:Password").Get<string>();
             var instanceName = configuration.GetSection("RedisConfig:InstanceName").Get<string>();
+
+            password = !string.IsNullOrEmpty(password)
+                ? password.NormalizePhoneNumberWithCountryCode()
+                : string.Empty;
 
             foreach (var endpoint in addresses)
             {

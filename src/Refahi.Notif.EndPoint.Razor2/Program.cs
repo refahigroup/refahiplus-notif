@@ -1,6 +1,7 @@
 using MassTransit;
 using Refahi.Notif.Application.Contract;
 using Refahi.Notif.Application.Service;
+using Refahi.Notif.Domain.Core.Utility;
 using Refahi.Notif.Infrastructure.Messaging.Sms;
 using Refahi.Notif.Infrastructure.Persistence;
 
@@ -14,11 +15,21 @@ builder.Services.AddMassTransit(x =>
 {
     x.UsingRabbitMq((context, cfg) =>
     {
+        var brokerUsername = builder.Configuration["BrokerInfo:Username"];
+        var brokerPassword = builder.Configuration["BrokerInfo:Password"];
+
+        brokerUsername = !string.IsNullOrEmpty(brokerUsername)
+           ? brokerUsername?.ReplaceWithEnvironmentVariables()
+           : string.Empty;
+
+        brokerPassword = !string.IsNullOrEmpty(brokerPassword)
+           ? brokerPassword?.ReplaceWithEnvironmentVariables()
+           : string.Empty;
 
         cfg.Host(builder.Configuration["BrokerInfo:Host"], "/", h =>
         {
-            h.Username(builder.Configuration["BrokerInfo:Username"]);
-            h.Password(builder.Configuration["BrokerInfo:Password"]);
+            h.Username(brokerUsername!);
+            h.Password(brokerPassword!);
         });
 
         cfg.ConfigureEndpoints(context);

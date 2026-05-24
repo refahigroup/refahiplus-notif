@@ -1,4 +1,5 @@
 using MassTransit;
+using Refahi.Notif.Domain.Core.Utility;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,10 +14,21 @@ builder.Services.AddMassTransit(x =>
     {
         var config = builder.Configuration;
 
+        var brokerUsername = config["BrokerInfo:Username"];
+        var brokerPassword = config["BrokerInfo:Password"];
+
+        brokerUsername = !string.IsNullOrEmpty(brokerUsername)
+           ? brokerUsername?.ReplaceWithEnvironmentVariables()
+           : string.Empty;
+
+        brokerPassword = !string.IsNullOrEmpty(brokerPassword)
+           ? brokerPassword?.ReplaceWithEnvironmentVariables()
+           : string.Empty;
+
         cfg.Host(config["BrokerInfo:Host"], "/", h =>
         {
-            h.Username(config["BrokerInfo:Username"]);
-            h.Password(config["BrokerInfo:Password"]);
+            h.Username(brokerUsername!);
+            h.Password(brokerPassword!);
         });
 
         cfg.ConfigureEndpoints(context);

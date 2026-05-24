@@ -35,12 +35,24 @@ namespace Refahi.Notif.EndPoint.Api.Startup
              .AddRabbitMQ(sp =>
              {
                  var hostParts = rabbitUrl.Split(':');
+
+                 var brokerUsername = config["BrokerInfo:Username"];
+                 var brokerPassword = config["BrokerInfo:Password"];
+
+                 brokerUsername = !string.IsNullOrEmpty(brokerUsername)
+                    ? brokerUsername?.ReplaceWithEnvironmentVariables()
+                    : string.Empty;
+
+                 brokerPassword = !string.IsNullOrEmpty(brokerPassword)
+                    ? brokerPassword?.ReplaceWithEnvironmentVariables()
+                    : string.Empty;
+
                  var factory = new ConnectionFactory()
                  {
                      HostName = hostParts[0],
                      Port = hostParts.Length > 1 ? int.Parse(hostParts[1]) : 5672,
-                     UserName = config["BrokerInfo:Username"],
-                     Password = config["BrokerInfo:Password"]
+                     UserName = brokerUsername!,
+                     Password = brokerPassword!
                  };
                  return factory.CreateConnectionAsync().GetAwaiter().GetResult();
              })

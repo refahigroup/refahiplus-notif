@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Refahi.Notif.Domain.Contract.Messaging;
+using Refahi.Notif.Domain.Core.Utility;
 using Refahi.Notif.Infrastructure.Messaging.RealTime.MassTransit;
 
 namespace Refahi.Notif.Infrastructure.Messaging.RealTime
@@ -23,10 +24,21 @@ namespace Refahi.Notif.Infrastructure.Messaging.RealTime
                 {
                     var config = serviceProvider.GetRequiredService<IConfiguration>();
 
+                    var brokerUsername = config["BrokerInfo:Username"];
+                    var brokerPassword = config["BrokerInfo:Password"];
+
+                    brokerUsername = !string.IsNullOrEmpty(brokerUsername)
+                       ? brokerUsername?.ReplaceWithEnvironmentVariables()
+                       : string.Empty;
+
+                    brokerPassword = !string.IsNullOrEmpty(brokerPassword)
+                       ? brokerPassword?.ReplaceWithEnvironmentVariables()
+                       : string.Empty;
+
                     cfg.Host(config["BrokerInfo:Host"], "/", h =>
                     {
-                        h.Username(config["BrokerInfo:Username"]);
-                        h.Password(config["BrokerInfo:Password"]);
+                        h.Username(brokerUsername!);
+                        h.Password(brokerPassword!);
                     });
 
                     cfg.ConfigureEndpoints(context);

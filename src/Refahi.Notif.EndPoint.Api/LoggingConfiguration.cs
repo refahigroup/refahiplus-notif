@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using Refahi.Notif.Domain.Core.Utility;
+using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
 using Serilog.Sinks.Elasticsearch;
@@ -40,6 +41,17 @@ namespace Refahi.Notif.EndPoint.Api
 
             #region ElasticSearch Configuration.
             var elasticUrl = context.Configuration["ElasticLogging:ElasticUrl"];
+            var elasticUser = context.Configuration["ElasticLogging:ElasticUser"];
+            var elasticPassword = context.Configuration["ElasticLogging:ElasticPassword"];
+
+            elasticUser = !string.IsNullOrEmpty(elasticUser)
+                ? elasticUser.ReplaceWithEnvironmentVariables()
+                : string.Empty;
+
+            elasticPassword = !string.IsNullOrEmpty(elasticPassword)
+                ? elasticPassword.ReplaceWithEnvironmentVariables()
+                : string.Empty;
+
             if (!string.IsNullOrEmpty(elasticUrl))
             {
                 var elasticIndexFormat = context.Configuration["ElasticLogging:IndexFormat"];
@@ -49,7 +61,7 @@ namespace Refahi.Notif.EndPoint.Api
                     {
                         AutoRegisterTemplate = true,
                         AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7,
-                        ModifyConnectionSettings = (c) => c.BasicAuthentication(context.Configuration["ElasticLogging:ElasticUser"], context.Configuration["ElasticLogging:ElasticPassword"]),
+                        ModifyConnectionSettings = (c) => c.BasicAuthentication(elasticUser, elasticPassword),
                         IndexFormat = elasticIndexFormat,
                         MinimumLogEventLevel = LogEventLevel.Debug
                     });
