@@ -1,9 +1,8 @@
 ﻿using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using RabbitMQ.Client;
-using Refahi.Notif.Infrastructure.Messaging.Sms.KaveNegar;
 using Refahi.Notif.Domain.Core.Utility;
+using Refahi.Notif.Infrastructure.Messaging.Sms.KaveNegar;
 
 namespace Refahi.Notif.EndPoint.Api.Startup
 {
@@ -23,7 +22,7 @@ namespace Refahi.Notif.EndPoint.Api.Startup
                 {
                     x.MinimumAvailableServers = 1;
                 });
-
+                
                 //.AddMassTransitBusHealthCheck();
                 //.AddMassTransit();
         }
