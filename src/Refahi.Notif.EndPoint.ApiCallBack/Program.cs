@@ -33,6 +33,7 @@ builder.Services.AddMassTransit(x =>
 
         cfg.ConfigureEndpoints(context);
     });
+
 });
 
 var app = builder.Build();
