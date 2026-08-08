@@ -21,6 +21,7 @@ namespace Refahi.Notif.Infrastructure.Messaging.Sms.KaveNegar
                 VerifySmsTemplate.Login => isAudio ? KaveSmsTemplate.OtpTemplate2 : KaveSmsTemplate.OtpTemplate1,
                 VerifySmsTemplate.Register => isAudio ? KaveSmsTemplate.OtpTemplate4 : KaveSmsTemplate.OtpTemplate3,
                 VerifySmsTemplate.ForgetPassword => isAudio ? KaveSmsTemplate.OtpTemplate6 : KaveSmsTemplate.OtpTemplate5,
+                VerifySmsTemplate.VendorInPersonPayment => isAudio ? KaveSmsTemplate.OtpTemplate2 : KaveSmsTemplate.OtpTemplate1,
                 _ => throw new ArgumentException(),
             };
         }

@@ -66,6 +66,19 @@ namespace Refahi.Notif.Application.Service.Otp
                 };
             }
 
+            if (!string.Equals(cachedOtp.Purpose, request.Purpose, StringComparison.OrdinalIgnoreCase))
+            {
+                _logger.LogWarning(
+                    "OTP validation failed: Purpose mismatch {ReferenceCode}, Expected={ExpectedPurpose}",
+                    request.ReferenceCode, cachedOtp.Purpose);
+                return new ValidateOtpResponse
+                {
+                    IsValid = false,
+                    AttemptsRemaining = Math.Max(0, cachedOtp.MaxAttempts - cachedOtp.Attempts),
+                    Message = "OTP purpose does not match"
+                };
+            }
+
             // Validate code
             if (cachedOtp.Code == request.Code)
             {

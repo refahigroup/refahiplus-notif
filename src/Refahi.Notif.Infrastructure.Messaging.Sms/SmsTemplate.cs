@@ -7,6 +7,8 @@ namespace Refahi.Notif.Infrastructure.Messaging.Sms
         public string LoginVerifyMessage { get; set; }
         public string RegisterVerifyMessage { get; set; }
         public string ForgetVerifyMessage { get; set; }
+        public string VendorInPersonPaymentVerifyMessage { get; set; } =
+            "کد تایید پرداخت حضوری رفاهی‌پلاس: {code}";
         public string GetVerifyMessage(VerifySmsTemplate template)
         {
             return template switch
@@ -14,6 +16,7 @@ namespace Refahi.Notif.Infrastructure.Messaging.Sms
                 VerifySmsTemplate.Register => RegisterVerifyMessage,
                 VerifySmsTemplate.Login => LoginVerifyMessage,
                 VerifySmsTemplate.ForgetPassword => ForgetVerifyMessage,
+                VerifySmsTemplate.VendorInPersonPayment => VendorInPersonPaymentVerifyMessage,
                 _ => throw new ArgumentException(),
             };
         }

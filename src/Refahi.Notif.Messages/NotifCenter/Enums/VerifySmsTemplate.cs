@@ -13,6 +13,9 @@ namespace Refahi.Notif.Messages.NotifCenter.Enums
 
         [Display(Name = "تغییر رمز")]
 
-        ForgetPassword = 2
+        ForgetPassword = 2,
+
+        [Display(Name = "پرداخت حضوری فروشنده")]
+        VendorInPersonPayment = 3
     }
 }

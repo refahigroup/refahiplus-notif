@@ -59,6 +59,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Refahi.Notif.Infrastructure
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Refahi.Notif.Infrastructure.MemoryCache", "src\Refahi.Notif.Infrastructure.MemoryCache\Refahi.Notif.Infrastructure.MemoryCache.csproj", "{84AC41AD-F194-42E0-99BC-D6B825DF42C5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "05_Tests", "05_Tests", "{9D036033-781F-4438-BED9-AB20D1511509}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Refahi.Notif.Infrastructure.Consumer.Tests", "tests\Refahi.Notif.Infrastructure.Consumer.Tests\Refahi.Notif.Infrastructure.Consumer.Tests.csproj", "{B8C9E3B8-5945-4FC8-8799-7DC7B85179EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -157,6 +161,10 @@ Global
 		{84AC41AD-F194-42E0-99BC-D6B825DF42C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{84AC41AD-F194-42E0-99BC-D6B825DF42C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{84AC41AD-F194-42E0-99BC-D6B825DF42C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8C9E3B8-5945-4FC8-8799-7DC7B85179EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8C9E3B8-5945-4FC8-8799-7DC7B85179EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8C9E3B8-5945-4FC8-8799-7DC7B85179EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8C9E3B8-5945-4FC8-8799-7DC7B85179EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -185,6 +193,7 @@ Global
 		{0501D6E9-9E01-4537-AE27-D80ED6ABD7E7} = {7D8AA1BD-DD7E-4F7D-B24D-B531BCCC1A88}
 		{3CFB1329-2CA6-4575-A2BB-D7420AB75367} = {7D8AA1BD-DD7E-4F7D-B24D-B531BCCC1A88}
 		{84AC41AD-F194-42E0-99BC-D6B825DF42C5} = {7D8AA1BD-DD7E-4F7D-B24D-B531BCCC1A88}
+		{B8C9E3B8-5945-4FC8-8799-7DC7B85179EE} = {9D036033-781F-4438-BED9-AB20D1511509}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {74227F49-B323-4679-BCF1-457F223AFCB0}

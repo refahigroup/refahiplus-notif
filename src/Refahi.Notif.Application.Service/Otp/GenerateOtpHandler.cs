@@ -113,6 +113,7 @@ namespace Refahi.Notif.Application.Service.Otp
                 "login" => VerifySmsTemplate.Login,
                 "signup" or "register" => VerifySmsTemplate.Register,
                 "reset-password" or "forget-password" => VerifySmsTemplate.ForgetPassword,
+                "vendor-in-person-payment" => VerifySmsTemplate.VendorInPersonPayment,
                 _ => VerifySmsTemplate.Register
             };
         }

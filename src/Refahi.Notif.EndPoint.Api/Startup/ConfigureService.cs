@@ -101,7 +101,7 @@ namespace Refahi.Notif.EndPoint.Api.Startup
                 services.AddRedis(configuration);
             }
 
-            services.AddConsumer(configuration);
+            services.AddConsumer(configuration, env);
             services.AddSmsMessaging();
             services.AddEmailMessaging(configuration);
             services.AddTelegramMessaging(configuration);

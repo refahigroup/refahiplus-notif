@@ -1,6 +1,8 @@
 ﻿using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Refahi.Notif.Domain.Core.Utility;
 using Refahi.Notif.Infrastructure.Consumer.InternalConsumers;
 using Refahi.Notif.Infrastructure.Consumer.MassTransit;
@@ -16,8 +18,12 @@ namespace Refahi.Notif.Infrastructure.Consumer
             x.Exponential(3, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(2));
 
 
-        public static void AddConsumer(this IServiceCollection services, IConfiguration config)
+        public static void AddConsumer(this IServiceCollection services, IConfiguration config, IHostEnvironment environment)
         {
+            var broker = RabbitMqBrokerSettings.FromConfiguration(
+                config,
+                requireExplicitVirtualHost: environment.IsProduction());
+
             services.AddMassTransit(x =>
             {
 
@@ -60,8 +66,8 @@ namespace Refahi.Notif.Infrastructure.Consumer
                 x.UsingRabbitMq((context, cfg) =>
                 {
 
-                    var brokerUsername = config["BrokerInfo:Username"];
-                    var brokerPassword = config["BrokerInfo:Password"];
+                    var brokerUsername = broker.Username;
+                    var brokerPassword = broker.Password;
 
                     brokerUsername = !string.IsNullOrEmpty(brokerUsername)
                        ? brokerUsername?.ReplaceWithEnvironmentVariables()
@@ -72,7 +78,15 @@ namespace Refahi.Notif.Infrastructure.Consumer
                        : string.Empty;
 
 
-                    cfg.Host(config["BrokerInfo:Host"], "/", h =>
+                    var logger = context.GetRequiredService<ILoggerFactory>()
+                        .CreateLogger("RabbitMqTransport");
+                    logger.LogInformation(
+                        "Configuring RabbitMQ transport. Host={RabbitMqHost}, VirtualHost={RabbitMqVirtualHost}, Username={RabbitMqUsername}",
+                        broker.Host,
+                        broker.VirtualHost,
+                        brokerUsername);
+
+                    cfg.Host(broker.Host, broker.VirtualHost, h =>
                     {
                         h.Username(brokerUsername!);
                         h.Password(brokerPassword!);

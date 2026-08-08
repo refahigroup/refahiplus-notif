@@ -17,5 +17,9 @@ namespace Refahi.Notif.Application.Contract.Dtos.Otp
         [Required]
         [StringLength(10, MinimumLength = 4)]
         public string Code { get; set; }
+
+        /// <summary>Purpose must match the purpose used when the OTP was generated.</summary>
+        [Required]
+        public string Purpose { get; set; }
     }
 }
