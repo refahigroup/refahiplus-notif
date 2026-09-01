@@ -192,37 +192,20 @@ docker_build_push:
       test -f "./$PUBLISH_DIR/Refahi.Notif.EndPoint.Api.dll"
 
       echo ""
-      echo "=== Create Runtime Dockerfile ==="
-
-      cat > "./$PUBLISH_DIR/Dockerfile.ci" <<'EOF'
-      FROM registry.refahi.xyz/platform/ci-images/aspnet:10.0
-
-      WORKDIR /app
-
-      EXPOSE 8080
-
-      COPY . .
-
-      ENTRYPOINT ["dotnet", "Refahi.Notif.EndPoint.Api.dll"]
-      EOF
-
-      echo ""
       echo "=== Docker Build ==="
 
-      # DOCKER_AUTH_CONFIG remains active here.
-      # It gives read-only access to platform/ci-images.
+      # DOCKER_AUTH_CONFIG remains active here so the Dockerfile
+      # can pull the shared ASP.NET runtime image.
       time docker build \
         --provenance=false \
-        --file "./$PUBLISH_DIR/Dockerfile.ci" \
+        --file "./src/Refahi.Notif.EndPoint.Api/Dockerfile" \
         --tag "$IMAGE_ENV" \
         --tag "$IMAGE_VER" \
-        "./$PUBLISH_DIR"
+        .
 
       echo ""
       echo "=== Switch Registry Credentials ==="
 
-      # Runner-level DOCKER_AUTH_CONFIG is read-only and intended
-      # only for shared platform images. Do not use it for pushing.
       unset DOCKER_AUTH_CONFIG
 
       rm -f /root/.docker/config.json
@@ -247,6 +230,7 @@ docker_build_push:
       echo "========================================"
       echo " Image published successfully"
       echo "========================================"
+
       echo "Environment : $IMAGE_ENV"
       echo "Version     : $IMAGE_VER"
 

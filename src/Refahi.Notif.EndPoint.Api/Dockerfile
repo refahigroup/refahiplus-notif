@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
+FROM registry.refahi.xyz/platform/ci-images/aspnet:10.0
 
 WORKDIR /app
 
@@ -6,10 +6,6 @@ EXPOSE 8080
 EXPOSE 80
 EXPOSE 443
 
-FROM base AS final
-
-WORKDIR /app
-
-COPY ./publish .
+COPY ./publish/notif .
 
 ENTRYPOINT ["dotnet", "Refahi.Notif.EndPoint.Api.dll"]
